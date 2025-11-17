@@ -208,3 +208,14 @@ if (!function_exists('apiError')) {
         );
     }
 }
+
+if (!function_exists('orderNumber')) {
+    /**
+     * 订单编号
+     * @return string
+     */
+    function orderNumber(): string
+    {
+        return date('YmdHis') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
+    }
+}

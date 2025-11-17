@@ -8,11 +8,21 @@ use Illuminate\Http\Request;
 class BaseController extends Controller
 {
 
-    public array $params;
-    public function __construct(Request $request)
-    {
-        $this->params = $request->all();
 
+    public function __construct()
+    {
+        $this->setLang();
+    }
+
+    /**
+     * 设置语言
+     * @return void
+     */
+    private function setLang(): void
+    {
+        $defaultLang = env('APP_ENV') == 'prod' ? 'en' : 'zh_CN';
+        $lang = \request()->header('lang',$defaultLang);
+        app()->setLocale($lang);
     }
 
 

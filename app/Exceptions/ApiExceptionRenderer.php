@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Nette\Schema\ValidationException;
 use Throwable;
 
 class ApiExceptionRenderer
@@ -25,6 +26,12 @@ class ApiExceptionRenderer
             'router' => $request->route(),
             'params' => $request->all()
         ]);
-        return apiError($e->getMessage(), $e->getCode() ?? -1);
+
+        $message = $e->getMessage();
+        // 参数验证异常
+        if ($e instanceof ValidationException) {
+            $message = __('params.error') .':'. $e->getMessage();
+        }
+        return apiError($message, $e->getCode() ?? -1);
     }
 }
