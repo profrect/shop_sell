@@ -137,4 +137,14 @@ class OrdersRepository extends BaseRepository
         );
     }
 
+    /**
+     * 订单详情
+     * @param $id
+     * @return Model|Builder|OrderModel|null
+     */
+    public function detail($id): Model|Builder|OrderModel|null
+    {
+        return OrderModel::query()->where('id', $id)->with('getGoods')->first();
+    }
+
 }

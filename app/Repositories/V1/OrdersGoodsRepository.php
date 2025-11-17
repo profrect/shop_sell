@@ -14,22 +14,24 @@ class OrdersGoodsRepository extends BaseRepository
     /**
      * 创建订单商品
      * @param array $data
-     * @return Model|OrdersGoods
+     * @return bool
      */
-    public function create(array $data): Model|OrdersGoods
+    public function create(array $data): bool
     {
-        return OrdersGoods::create(
-            [
+        $insert = [];
+        foreach ($data['goods'] as $good) {
+            $insert[] = [
                 'order_id'     => $data['order_id'],
-                'goods_id'     => $data['goods_id'],
-                'goods_num'    => $data['goods_num'],
-                'goods_title'  => $data['goods_title'],
-                'goods_price'  => $data['goods_price'],
-                'goods_all'    => $data['goods_all'],
+                'goods_id'     => $good['id'],
+                'goods_num'    => $good['num'],
+                'goods_title'  => $good['title'],
+                'goods_price'  => $good['price'],
+                'goods_all'    => $good['total'],
                 'created_time' => time(),
                 'updated_time' => time(),
-            ]
-        );
+            ];
+        }
+        return new OrdersGoods()->insert($insert);
     }
 
 

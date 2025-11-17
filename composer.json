@@ -30,7 +30,8 @@
         "qcloud/cos-sdk-v5": "^2.6",
         "webman/captcha": "^1.0",
         "wolf-leo/phplogviewer": "^0.11.3",
-        "wolfcode/authenticator": "^0.0.6"
+        "wolfcode/authenticator": "^0.0.6",
+        "ext-bcmath": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.1",

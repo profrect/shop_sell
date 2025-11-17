@@ -38,6 +38,7 @@ class OrdersRequest extends BaseRequest
     protected array $scenes = [
         'create' => ['goods', 'username', 'mobile', 'address'],
         'cancel' => ['order_id'],
+        'detail' => ['order_id'],
     ];
 
 }

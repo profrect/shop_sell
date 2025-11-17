@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -23,32 +24,35 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string|null $create_time 创建时间
  * @property string|null $update_time 更新时间
  * @property string|null $delete_time 删除时间
- * @property-read \App\Models\MallCate|null $cate
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods query()
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereCateId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereCreateTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereDeleteTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereDescribe($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereDiscountPrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereImages($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereLogo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereMarketPrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereRemark($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereSales($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereSort($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereStock($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereTotalStock($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereUpdateTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MallGoods whereVirtualSales($value)
+ * @property-read MallCate|null $cate
+ * @method static Builder|MallGoods newModelQuery()
+ * @method static Builder|MallGoods newQuery()
+ * @method static Builder|MallGoods query()
+ * @method static Builder|MallGoods whereCateId($value)
+ * @method static Builder|MallGoods whereCreateTime($value)
+ * @method static Builder|MallGoods whereDeleteTime($value)
+ * @method static Builder|MallGoods whereDescribe($value)
+ * @method static Builder|MallGoods whereDiscountPrice($value)
+ * @method static Builder|MallGoods whereId($value)
+ * @method static Builder|MallGoods whereImages($value)
+ * @method static Builder|MallGoods whereLogo($value)
+ * @method static Builder|MallGoods whereMarketPrice($value)
+ * @method static Builder|MallGoods whereRemark($value)
+ * @method static Builder|MallGoods whereSales($value)
+ * @method static Builder|MallGoods whereSort($value)
+ * @method static Builder|MallGoods whereStatus($value)
+ * @method static Builder|MallGoods whereStock($value)
+ * @method static Builder|MallGoods whereTitle($value)
+ * @method static Builder|MallGoods whereTotalStock($value)
+ * @method static Builder|MallGoods whereUpdateTime($value)
+ * @method static Builder|MallGoods whereVirtualSales($value)
  * @mixin \Eloquent
  */
 class MallGoods extends BaseModel
 {
+
+    const int STATUS_DISABLE = 1;// 禁用
+    const int STATUS_ENABLE  = 2;// 启用
 
     public function cate(): HasOne
     {
