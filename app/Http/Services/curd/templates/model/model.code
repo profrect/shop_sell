@@ -1,0 +1,10 @@
+<?php
+
+namespace {{modelNamespace}};
+
+class {{modelName}} extends BaseModel
+{
+
+    {{selectList}}
+
+}
