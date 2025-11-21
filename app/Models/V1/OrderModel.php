@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $receive_time 收货时间
  * @property int $finish_time 完成时间
  * @property string $username 收件人
+ * @property string|null $mobile 收件人联系方式
  * @property string|null $address 收件地址
  * @property int|null $created_time
  * @property int|null $updated_time
@@ -34,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder|OrderModel whereFinishTime($value)
  * @method static Builder|OrderModel whereGoodsMoney($value)
  * @method static Builder|OrderModel whereId($value)
+ * @method static Builder|OrderModel whereMobile($value)
  * @method static Builder|OrderModel whereNumber($value)
  * @method static Builder|OrderModel wherePayTime($value)
  * @method static Builder|OrderModel whereReceiveTime($value)

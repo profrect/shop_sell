@@ -31,19 +31,6 @@ class OrderController extends BaseController
         return apiSuccess($data);
     }
 
-
-    /**
-     * @param OrdersRequest $request
-     * @return JsonResponse
-     * @throws Throwable
-     */
-    public function create(OrdersRequest $request): JsonResponse
-    {
-        $request->scene('create')->validated();
-        $order = $this->orderService->create();
-        return apiSuccess(['order_id' => $order->id]);
-    }
-
     /**
      * 订单详情
      * @param $order_id

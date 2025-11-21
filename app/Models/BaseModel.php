@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -9,13 +10,17 @@ use Illuminate\Support\Facades\DB;
  * @property string $create_time
  * @property string $update_time
  * @property string $delete_time
- * @method static \Illuminate\Database\Eloquent\Builder|BaseModel newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|BaseModel newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|BaseModel query()
+ * @method static Builder|BaseModel newModelQuery()
+ * @method static Builder|BaseModel newQuery()
+ * @method static Builder|BaseModel query()
  * @mixin \Eloquent
  */
 class BaseModel extends Model
 {
+
+    const int STATUS_DISABLE = 1;// 禁用
+    const int STATUS_ENABLE  = 2;// 启用
+
     /**
      * 与模型关联的数据表。
      *
