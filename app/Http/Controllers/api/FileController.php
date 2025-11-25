@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Models\V1\File;
+use App\Models\V1\Files;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -21,7 +21,7 @@ class FileController extends BaseController
      */
     public function list(): JsonResponse
     {
-        $list = File::query()->get();
+        $list = Files::query()->get();
         return apiSuccess($list);
     }
 
