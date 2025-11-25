@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\DB;
 class BaseModel extends Model
 {
 
-    const int STATUS_DISABLE = 1;// 禁用
-    const int STATUS_ENABLE  = 2;// 启用
+    const STATUS_DISABLE = 1;// 禁用
+    const STATUS_ENABLE  = 2;// 启用
 
     /**
      * 与模型关联的数据表。
