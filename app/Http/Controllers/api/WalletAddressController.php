@@ -16,7 +16,7 @@ class WalletAddressController extends BaseController
     public function index(): JsonResponse
     {
         $list = WalletAddress::query()->groupBy('currency_type')->groupBy('protocol_type')
-            ->get();
+            ->get()?->toArray();
         return apiSuccess($list);
     }
 

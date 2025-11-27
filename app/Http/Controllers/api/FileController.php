@@ -21,7 +21,7 @@ class FileController extends BaseController
      */
     public function list(): JsonResponse
     {
-        $list = Files::query()->get();
+        $list = Files::query()->get()?->toArray();
         return apiSuccess($list);
     }
 

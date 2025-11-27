@@ -34,7 +34,7 @@ class GoodsController extends BaseController
                 ->orderByDesc('sort')
                 ->get();
         });
-        return apiSuccess($cate);
+        return apiSuccess($cate?->toArray());
     }
 
     /**
