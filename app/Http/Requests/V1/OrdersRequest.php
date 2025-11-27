@@ -36,7 +36,7 @@ class OrdersRequest extends BaseRequest
      * @var array|array[]
      */
     protected array $scenes = [
-        'create' => ['goods', 'username', 'mobile', 'address'],
+        'create' => ['goods'],
         'cancel' => ['order_id'],
         'detail' => ['order_id'],
     ];
