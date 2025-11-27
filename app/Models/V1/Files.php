@@ -4,8 +4,6 @@ namespace App\Models\V1;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
@@ -29,12 +27,21 @@ use Illuminate\Database\Eloquent\Model;
 class Files extends BaseModel
 {
 
+    protected $appends = ['img_url'];
+
     public static array $types = [
         'big'    => '顶部大图',
         'small'  => '顶部小图',
         'middle' => '中间图片',
         'risk'   => '风险图片',
         'last'   => '底部图片',
+        'wallet' => '钱包图片'
     ];
+
+    // 添加一个获取图片地址的属性
+    public function getImgUrlAttribute(): string
+    {
+        return env('APP_URL').'/'.$this->url;
+    }
 
 }
