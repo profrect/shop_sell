@@ -41,7 +41,7 @@ class Files extends BaseModel
     // 添加一个获取图片地址的属性
     public function getImgUrlAttribute(): string
     {
-        return env('APP_URL').'/'.$this->url;
+        return env('APP_URL').$this->url;
     }
 
 }
