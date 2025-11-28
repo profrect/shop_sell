@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\FileController;
 use App\Http\Controllers\api\GoodsController;
+use App\Http\Controllers\api\IconController;
 use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\WalletAddressController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,11 @@ Route::prefix('file')->group(function () {
 //钱包地址
 Route::prefix('wallet')->group(function () {
     Route::get('', [WalletAddressController::class, 'index'])->name('钱包列表');
+});
+
+//图标
+Route::prefix('icon')->group(function () {
+    Route::get('', [IconController::class, 'index'])->name('图标列表');
 });
 
 

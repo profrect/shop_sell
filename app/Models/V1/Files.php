@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string $create_time
  * @property string $update_time
  * @property string $delete_time
+ * @property-read string $img_url
  * @method static Builder|Files newModelQuery()
  * @method static Builder|Files newQuery()
  * @method static Builder|Files query()
