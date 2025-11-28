@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\admin\mall;
 
 use App\Http\Controllers\common\AdminController;
-use App\Models\Icon;
+use App\Models\V1\Icon;
 
 /**
  * @ControllerAnnotation(title="icon")

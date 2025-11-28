@@ -25,4 +25,14 @@ use Illuminate\Database\Eloquent\Builder;
 class Icon extends BaseModel
 {
 
+    protected $appends = [
+        'icon_url'
+    ];
+
+    //获取图标地址
+    public function getIconUrlAttribute(): string
+    {
+        return $this->icon ? env('APP_URL').$this->icon : '';
+    }
+
 }
