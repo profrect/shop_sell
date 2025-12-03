@@ -29,12 +29,15 @@ use Illuminate\Database\Eloquent\Builder;
 class ChatUser extends BaseModel
 {
 
-    public static function userName($type = 'user'): string
+    public static function userName($type = 'user', $name = ''): string
     {
         do {
             $username = 'simple_shop';
-            $type == 'user' ? $username .= '_u' : $username .= '_a';
-            $username .= '_' . substr(md5(microtime()), rand(0, 26), 5);
+            if ($type == 'user') {
+                $username .= '_u_' . substr(md5(microtime()), rand(0, 26), 5);
+            } else {
+                $username .= '_a_' . $name;
+            }
         } while (self::where('username', $username)->exists());
         return $username;
     }

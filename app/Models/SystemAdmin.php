@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Http\Services\ImChatService;
+use App\Models\V1\ChatUser;
+use Illuminate\Database\Eloquent\Builder;
+
 /**
  * @property int $id
  * @property string|null $auth_ids 角色权限ID
@@ -19,25 +23,25 @@ namespace App\Models;
  * @property int $login_type 登录方式
  * @property string $ga_secret 谷歌验证码秘钥
  * @property string|null $im_id imid
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin query()
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereAuthIds($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereCreateTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereDeleteTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereGaSecret($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereHeadImg($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereImId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereLoginNum($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereLoginType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereRemark($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereSort($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereUpdateTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereUsername($value)
+ * @method static Builder|SystemAdmin newModelQuery()
+ * @method static Builder|SystemAdmin newQuery()
+ * @method static Builder|SystemAdmin query()
+ * @method static Builder|SystemAdmin whereAuthIds($value)
+ * @method static Builder|SystemAdmin whereCreateTime($value)
+ * @method static Builder|SystemAdmin whereDeleteTime($value)
+ * @method static Builder|SystemAdmin whereGaSecret($value)
+ * @method static Builder|SystemAdmin whereHeadImg($value)
+ * @method static Builder|SystemAdmin whereId($value)
+ * @method static Builder|SystemAdmin whereImId($value)
+ * @method static Builder|SystemAdmin whereLoginNum($value)
+ * @method static Builder|SystemAdmin whereLoginType($value)
+ * @method static Builder|SystemAdmin wherePassword($value)
+ * @method static Builder|SystemAdmin wherePhone($value)
+ * @method static Builder|SystemAdmin whereRemark($value)
+ * @method static Builder|SystemAdmin whereSort($value)
+ * @method static Builder|SystemAdmin whereStatus($value)
+ * @method static Builder|SystemAdmin whereUpdateTime($value)
+ * @method static Builder|SystemAdmin whereUsername($value)
  * @mixin \Eloquent
  */
 class SystemAdmin extends BaseModel
@@ -48,6 +52,26 @@ class SystemAdmin extends BaseModel
             2 => '密码 + 谷歌验证码登录'
         ],
     ];
+
+    protected static function booted(): void
+    {
+        static::created(function ($model) {
+            if (!$model->im_id) {
+                self::registerIm($model);
+            }
+        });
+        static::updated(function ($model) {
+            if (!$model->im_id) {
+                self::registerIm($model);
+            }
+        });
+    }
+
+    private static function registerIm(self $admin): void
+    {
+        $username = ChatUser::userName('admin', $admin->username);
+        (new ImChatService())->registerUserByName(['username' => $username, 'id' => $admin->id]);
+    }
 
     public function getAuthList(): array
     {
