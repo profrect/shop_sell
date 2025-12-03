@@ -4,9 +4,11 @@ use App\Http\Controllers\api\FileController;
 use App\Http\Controllers\api\GoodsController;
 use App\Http\Controllers\api\IconController;
 use App\Http\Controllers\api\OrderController;
+use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\WalletAddressController;
 use Illuminate\Support\Facades\Route;
 
+//商品
 Route::prefix('goods')->group(function () {
     Route::get('', [GoodsController::class, 'list'])->name('商品列表');
 });
@@ -23,10 +25,13 @@ Route::prefix('file')->group(function () {
 Route::prefix('wallet')->group(function () {
     Route::get('', [WalletAddressController::class, 'index'])->name('钱包列表');
 });
-
 //图标
 Route::prefix('icon')->group(function () {
     Route::get('', [IconController::class, 'index'])->name('图标列表');
+});
+// 用户
+Route::prefix('user')->group(function () {
+    Route::post('getSign', [UserController::class, 'getSign'])->name('获取IM签名');
 });
 
 

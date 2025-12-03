@@ -18,6 +18,7 @@ namespace App\Models;
  * @property string|null $delete_time 删除时间
  * @property int $login_type 登录方式
  * @property string $ga_secret 谷歌验证码秘钥
+ * @property string|null $im_id imid
  * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin query()
@@ -27,6 +28,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereGaSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereHeadImg($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereImId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereLoginNum($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin whereLoginType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemAdmin wherePassword($value)

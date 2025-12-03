@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string $create_time 创建时间
  * @property string $update_time 更新时间
  * @property string $delete_time
+ * @property-read string $icon_url
  * @method static Builder|Icon newModelQuery()
  * @method static Builder|Icon newQuery()
  * @method static Builder|Icon query()
