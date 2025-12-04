@@ -52,6 +52,18 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class MallGoods extends BaseModel
 {
+
+    protected $appends = ['logo_url'];
+
+    /**
+     * 商品logo
+     * @return string
+     */
+    public function getLogoUrlAttribute(): string
+    {
+        return $this->logo ? env('APP_URL').($this->logo) : '';
+    }
+
     public function cate(): HasOne
     {
         return $this->hasOne(MallCate::class, 'id', 'cate_id')->select('id', 'title');
