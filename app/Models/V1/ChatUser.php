@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class ChatUser extends BaseModel
 {
+    protected $guarded = [];
 
     public static function userName($type = 'user', $name = ''): string
     {

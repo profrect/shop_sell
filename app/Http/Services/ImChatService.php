@@ -7,6 +7,7 @@ use App\Models\V1\ChatUser;
 use Exception;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use phpseclib3\Crypt\RSA;
 
 class ImChatService
@@ -29,12 +30,12 @@ class ImChatService
             'username' => (string)$data['username'],
             'nickname' => (string)$data['username'],
         ];
-        $res    = Http::asJson()->post($this->url . '/api/open/create-user-by-username', $params);
+        $res    = Http::asJson()->post($this->url . '/api/open/create-user-by-username', $params)->json();
         if (!empty($res['uid'])) {
             if ($type == 'user') {
-                (new ChatUser())->update(['chat_id' => $res['uid']], ['id' => $data['id']]);
+                (new ChatUser())->where('id', $data['id'])->update(['im_id' => $res['uid']]);
             } else {
-                (new SystemAdmin())->update(['chat_id' => $res['uid']], ['id' => $data['id']]);
+                (new SystemAdmin())->where('id', $data['id'])->update(['im_id' => $res['uid']]);
             }
         }
         return true;
