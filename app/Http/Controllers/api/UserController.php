@@ -32,6 +32,8 @@ class UserController extends BaseController
                     'ip'       => $ip,
                     'username' => ChatUser::userName(),
                     'device'   => $request->input('device', ''),
+                    'create_time' => time(),
+                    'update_time' => time(),
                 ]
             );
             (new ImChatService())->registerUserByName(['username' => $user->username, 'id' => $user->id]);
