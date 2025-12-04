@@ -6,29 +6,42 @@ use App\Http\Requests\BaseRequest;
 
 class OrdersRequest extends BaseRequest
 {
-    public function rules(): array
+    public function fullRules(): array
     {
         return [
             'order_id'  => 'required|integer',
             'goods'     => 'required|array',
-            'goods.id'  => 'required|integer',
-            'goods.num' => 'required|integer',
+            'goods.*.id'  => 'required|integer',
+            'goods.*.num' => 'required|integer',
             'username'  => 'required',
             'mobile'    => 'required',
             'address'   => 'required|string',
         ];
     }
 
+    /**
+     * 方法名到场景名的映射
+     * @return array
+     */
+    protected function methodSceneMap(): array
+    {
+        return [
+            'sure' => 'create',
+            'cancel' => 'cancel',
+            'detail' => 'detail',
+        ];
+    }
+
     public function attributes(): array
     {
         return [
-            'order_id'  => __('fields.order.order_id'),
-            'goods'     => __('fields.order.goods'),
-            'goods.id'  => __('fields.order.goods_id'),
-            'goods.num' => __('fields.order.goods_num'),
-            'username'  => __('fields.order.username'),
-            'mobile'    => __('fields.order.mobile'),
-            'address'   => __('fields.order.address'),
+            'order_id'    => __('fields.order.order_id'),
+            'goods'       => __('fields.order.goods'),
+            'goods.*.id'  => __('fields.order.goods_id'),
+            'goods.*.num' => __('fields.order.goods_num'),
+            'username'    => __('fields.order.username'),
+            'mobile'      => __('fields.order.mobile'),
+            'address'     => __('fields.order.address'),
         ];
     }
 
