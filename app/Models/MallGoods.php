@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -25,7 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string|null $create_time 创建时间
  * @property string|null $update_time 更新时间
  * @property string|null $delete_time 删除时间
- * @property-read \App\Models\MallCate|null $cate
+ * @property-read MallCate|null $cate
  * @method static Builder|MallGoods newModelQuery()
  * @method static Builder|MallGoods newQuery()
  * @method static Builder|MallGoods query()
@@ -48,7 +49,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static Builder|MallGoods whereTotalStock($value)
  * @method static Builder|MallGoods whereUpdateTime($value)
  * @method static Builder|MallGoods whereVirtualSales($value)
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class MallGoods extends BaseModel
 {
