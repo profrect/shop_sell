@@ -3,9 +3,18 @@
 namespace App\Http\Services;
 
 
+use App\Exceptions\ApiException;
+use App\Models\V1\ChatUser;
+use App\Models\V1\DigitalCurrencyOrder;
+use App\Models\V1\OrderModel;
+use App\Models\V1\UserWallet;
+use Exception;
 use Illuminate\Support\Env;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class EtPayService
 {
@@ -57,7 +66,7 @@ class EtPayService
      * @param string $url
      * @param array $data
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     private function request(string $url, array $data = []): mixed
     {
@@ -72,32 +81,32 @@ class EtPayService
                 Log::error("支付接口错误:msg:" . $result['msg'] . ";code:" . $result['code']);
             }
             return $result['data'];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage() . "\n" . $e->getTraceAsString());
-            throw new \Exception('fail');
+            throw new Exception('fail');
         }
     }
 
     /**
      * 创建用户
-     * @throws \Exception
+     * @throws Exception|InvalidArgumentException
      */
-    public function createdUser($userId)
+    public function createdUser($userId): array
     {
-        $user = User::find($userId);
+        $user = ChatUser::find($userId);
         if (!$user['pay_id']) {
             $url          = '/open-api/merchant/user/create';
             $res          = $this->request($url, ['userId' => (string)$userId]);
             $user->pay_id = $res['userId'];
             $user->save();
             // 设置交易密码
-            $this->setPayPwd($userId, $user->second_password);
+            $this->setPayPwd($userId, $user->pay_password);
         }
         // 创建地址
         $res = $this->getCurrencyInfo('USDT');
         foreach ($res['protocolTypeList'] as $item) {
             // 判断地址是否存在
-            $address = UserWalletAddress::where('user_id', $userId)->where('currency_type', $res['currencyType'])->where('protocol_type', $item['protocolType'])->find();
+            $address = UserWallet::where('user_id', $userId)->where('currency_type', $res['currencyType'])->where('protocol_type', $item['protocolType'])->first();
             if ($address) {
                 continue;
             }
@@ -110,10 +119,11 @@ class EtPayService
      * 设置支付密码
      * @param $userId
      * @param $pwd
+     * @throws Exception
      */
     public function setPayPwd($userId, $pwd)
     {
-        $user   = User::find($userId);
+        $user   = ChatUser::find($userId);
         $url    = '/open-api/merchant/user/setPaymentPwd';
         $params = [
             'userId'          => $user->pay_id,
@@ -126,19 +136,17 @@ class EtPayService
     /**
      * 修改支付密码
      * @param $userId
-     * @param $oldPwd
-     * @param $newPwd
-     * @throws \Exception
+     * @throws Exception
      */
-    public function updatePayPwd($userId)
+    public function updatePayPwd($userId): void
     {
-        $user   = User::find($userId);
+        $user   = ChatUser::find($userId);
         $url    = '/open-api/merchant/user/updatePaymentPwd';
         $params = [
             'userId'             => $user->pay_id,
-            'paymentPwd'         => $user->second_password,
-            'newPaymentPwd'      => $user->second_password,
-            'againNewPaymentPwd' => $user->second_password,
+            'paymentPwd'         => $user->pay_password,
+            'newPaymentPwd'      => $user->pay_password,
+            'againNewPaymentPwd' => $user->pay_password,
         ];
         $this->request($url, $params);
     }
@@ -146,15 +154,16 @@ class EtPayService
     /**
      * 重置支付密码
      * @param $userId
+     * @throws Exception
      */
-    public function resetPayPwd($userId)
+    public function resetPayPwd($userId): void
     {
-        $user   = User::find($userId);
+        $user   = ChatUser::find($userId);
         $url    = '/open-api/merchant/user/resetPaymentPwd';
         $params = [
             'userId'             => $user->pay_id,
-            'newPaymentPwd'      => $user->second_password,
-            'againNewPaymentPwd' => $user->second_password,
+            'newPaymentPwd'      => $user->pay_password,
+            'againNewPaymentPwd' => $user->pay_password,
         ];
         $this->request($url, $params);
     }
@@ -165,10 +174,11 @@ class EtPayService
      * @param $currencyType
      * @param $protocolType
      * @return bool
+     * @throws Exception
      */
     public function addAddress($userId, $currencyType, $protocolType): bool
     {
-        $user   = User::find($userId);
+        $user   = ChatUser::find($userId);
         $url    = '/open-api/merchant/wallet/address/add';
         $params = [
             'userId'       => $user->pay_id,
@@ -176,7 +186,7 @@ class EtPayService
             'protocolType' => $protocolType,//协议类型
         ];
         $res    = $this->request($url, $params);
-        UserWalletAddress::create(
+        UserWallet::create(
             [
                 'user_id'       => $userId,
                 'address'       => $res['walletAddress'],
@@ -187,24 +197,6 @@ class EtPayService
         return true;
     }
 
-    /**
-     * 删除地址
-     * @param $userId
-     * @param $address
-     * @return bool
-     */
-    public function delAddress($userId, $address): bool
-    {
-        $user   = User::find($userId);
-        $url    = '/open-api/merchant/wallet/address/del';
-        $params = [
-            'userId'  => $user->pay_id,
-            'address' => $address,//币种类型
-        ];
-        $res    = $this->request($url, $params);
-        if ($res) UserWalletAddress::where('address', $address)->where('user_id', $userId)->delete();
-        return $res;
-    }
 
     /**
      * 地址列表
@@ -212,10 +204,11 @@ class EtPayService
      * @param $currencyType
      * @param $protocolType
      * @return array
+     * @throws Exception
      */
     public function listAddress($userId, $currencyType, $protocolType): array
     {
-        $user   = User::find($userId);
+        $user   = ChatUser::find($userId);
         $url    = '/open-api/merchant/wallet/address/list';
         $params = [
             'userId'       => $user->pay_id,
@@ -226,7 +219,11 @@ class EtPayService
         $res = $this->request($url, $params);
 
         // 查询用户钱包地址信息
-        $walletList = UserWalletAddress::where('user_id', $userId)->where('currency_type', $currencyType)->where('protocol_type', $protocolType)->column('id,address', 'address'); // 以地址为键获取ID和地址
+        $walletList = UserWallet::where('user_id', $userId)
+            ->where('currency_type', $currencyType)
+            ->where('protocol_type', $protocolType)
+            ->select(['id, address'])
+            ->get()->keyBy('address'); // 以地址为键获取ID和地址
 
         // 存储远程存在的地址，用于后续对比
         foreach ($res as &$item) {
@@ -238,16 +235,15 @@ class EtPayService
                 $item['id'] = $walletItem['id'];
 
                 // 更新余额和入账次数
-                UserWalletAddress::where('id', $walletItem['id'])->update([
+                UserWallet::where('id', $walletItem['id'])->update([
                     'balance'  => $item['balance'],
                     'in_times' => $item['inCount'],
                 ]);
-
                 // 从本地列表中移除，表示已处理
                 unset($walletList[$item['address']]);
             } else {
                 // 新增远程存在但本地不存在的地址
-                UserWalletAddress::create([
+                UserWallet::create([
                     'user_id'       => $userId,
                     'address'       => $item['address'],
                     'currency_type' => $currencyType,
@@ -260,8 +256,8 @@ class EtPayService
 
         // 删除本地存在但远程不存在的地址
         if (!empty($walletList)) {
-            $deleteIds = array_column($walletList, 'id');
-            UserWalletAddress::where('id', 'in', $deleteIds)->delete();
+            $deleteIds = $walletList->pluck('id')->toArray();
+            UserWallet::where('id', 'in', $deleteIds)->delete();
         }
         return $res;
     }
@@ -270,14 +266,13 @@ class EtPayService
      * 获取币种信息
      * @param $currencyType
      * @return array
-     * @throws \Exception
+     * @throws Exception|InvalidArgumentException
      */
     public function getCurrencyInfo($currencyType): array
     {
         $key = 'currency_info_' . $currencyType;
-        if (Cache::get('?' . $key)) {
-            $res = Cache::get($key);
-            return json_decode($res, true);
+        if (Cache::store('redis')->has($key)) {
+            return Cache::store('redis')->get($key);
         }
 
         $url    = '/open-api/merchant/wallet/getCurrencyInfo';
@@ -286,11 +281,11 @@ class EtPayService
         ];
         $data   = $this->request($url, $params);
         foreach ($data['protocolTypeList'] as $k => $item) {
-            if (!in_array($item['protocolType'], UserWalletAddress::TYPE_GROUP)) {
+            if (!in_array($item['protocolType'], UserWallet::TYPE_GROUP)) {
                 unset($data['protocolTypeList'][$k]);
             }
         }
-        if ($data) Cache::set($key, json_encode($data), 3600 * 24);
+        if ($data) Cache::store('redis')->set($key, $data, 3600 * 24);
         return $data;
     }
 
@@ -311,7 +306,13 @@ class EtPayService
         return $sign == md5($str . $this->appSecret);
     }
 
-    // 回调处理
+    /**
+     * 回调处理
+     * @param $params
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws \Throwable
+     */
     public function notify($params): bool
     {
         // 1. 确保签名正确
@@ -327,9 +328,9 @@ class EtPayService
         $lockKey   = "etpay:notify:lock:" . $orderNo;
         $requestId = uniqid();
         $return    = false;
-        Db::startTrans();
+        Db::beginTransaction();
         try {
-            $user = User::where('pay_id', $userId)->find();
+            $user = ChatUser::where('pay_id', $userId)->first();
             if (!$user) {
                 Log::error('用户不存在: ' . $userId);
                 return false;
@@ -344,17 +345,17 @@ class EtPayService
                     $this->handlePayment($user, $params);
                     break;
                 case 2:
-                    $this->handleWithdraw($user, $params);
+
                     break;
             }
 
             $return = true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('回调处理异常: ' . $e->getMessage());
         } finally {
             // 释放锁（只有当前请求持有的锁才能释放）
             if ($redis->get($lockKey) == $requestId) {
-                $redis->rm($lockKey);
+                $redis->forget($lockKey);
             }
             if ($return) {
                 Db::commit();
@@ -370,14 +371,15 @@ class EtPayService
      * @param $user
      * @param $params
      * @return void
+     * @throws ApiException
      */
-    private function handlePayment($user, $params)
+    private function handlePayment($user, $params): void
     {
         // 1. 查询订单
-        $order      = Order::where('user_id', $user->id)
-            ->where('state', Order::ORDER_STATE_WAIT)
-            ->where('expiretime', '<=', time())
-            ->find();
+        $order      = OrderModel::where('user_id', $user->id)
+            ->where('state', OrderModel::STATUS_PAYING)
+            ->whereTime('expiretime', '<=', time())
+            ->first();
         $pay_status = true;
         if (($order && $order->pay_price > $params['number']) || !$order) {
             $pay_status = false;
@@ -385,16 +387,10 @@ class EtPayService
         if ($pay_status) {
             $orderId = $order->id;
             if ($params['status'] == 'success') {
-                Order::pay_notify($order->id);
+                OrderModel::pay_notify($order->id);
             }
-            if ($params['number'] > $order->pay_price) {
-                User::money($params['number'] - $order->pay_price, $user->id, 2, 'balance', '转入余额', $orderId);
-            }
-        } else {
-            $orderId = 0;
-            User::money($params['number'], $user->id, 1, 'money', '没有订单转入保证金');
         }
-        DigitalCurrencyOrder::addLog($user, $orderId, $params);
+        DigitalCurrencyOrder::addLog($user, $orderId ?? 0, $params);
     }
 
 

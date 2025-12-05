@@ -26,7 +26,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string|null $create_time 创建时间
  * @property string|null $update_time 更新时间
  * @property string|null $delete_time 删除时间
- * @property-read MallCate|null $cate
+ * @property-read \App\Models\MallCate|null $cate
+ * @property-read string $logo_url
  * @method static Builder|MallGoods newModelQuery()
  * @method static Builder|MallGoods newQuery()
  * @method static Builder|MallGoods query()

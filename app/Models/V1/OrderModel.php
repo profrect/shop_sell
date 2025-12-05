@@ -2,13 +2,17 @@
 
 namespace App\Models\V1;
 
+use App\Exceptions\ApiException;
 use App\Models\BaseModel;
+use App\Models\MallGoods;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 
 /**
  * @property int $id
+ * @property int|null $user_id 用户id
  * @property string $number 订单编号
  * @property string $total_money 总金额
  * @property string $goods_money 商品金额
@@ -43,18 +47,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder|OrderModel whereStatus($value)
  * @method static Builder|OrderModel whereTotalMoney($value)
  * @method static Builder|OrderModel whereUpdatedTime($value)
+ * @method static Builder|OrderModel whereUserId($value)
  * @method static Builder|OrderModel whereUsername($value)
  * @mixin \Eloquent
  */
 class OrderModel extends BaseModel
 {
     //状态：0支付中，1待发货，2已发货，3已收货，4已完成，-1已取消
-    const int STATUS_PAYING    = 0;
-    const int STATUS_WAIT_SEND = 1;
-    const int STATUS_SEND      = 2;
-    const int STATUS_RECEIVE   = 3;
-    const int STATUS_FINISH    = 4;
-    const int STATUS_CANCEL    = -1;
+    const  STATUS_PAYING    = 0;
+    const  STATUS_WAIT_SEND = 1;
+    const  STATUS_SEND      = 2;
+    const  STATUS_RECEIVE   = 3;
+    const  STATUS_FINISH    = 4;
+    const  STATUS_CANCEL    = -1;
 
 
     public function __construct(array $attributes = [])
@@ -70,6 +75,27 @@ class OrderModel extends BaseModel
     public function getGoods(): HasMany
     {
         return $this->hasMany(OrdersGoods::class, 'order_id', 'id');
+    }
+
+    /**
+     *支付成功回调
+     * @param $order_id
+     * @return true
+     * @throws ApiException
+     */
+    public static function pay_notify($order_id): true
+    {
+        $row = self::where('id', $order_id)->first();
+        if (!$row) {
+            throw new ApiException("订单不存在");
+        }
+        if ($row['status'] != self::STATUS_PAYING) {
+            throw new ApiException("订单已付款成功");
+        }
+        $row->status   = self::STATUS_WAIT_SEND;
+        $row->pay_time = time();
+        $row->save();
+        return true;
     }
 
 
