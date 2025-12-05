@@ -57,7 +57,7 @@ class ChatUser extends BaseModel
      */
     public static function addUser($ip, $device = ''): Model|Builder|ChatUser
     {
-        $user = self::where('ip', $ip)->whereTime('create_time', '>', time() - (7 * 24 * 3600))->first();
+        $user = self::where('ip', $ip)->where('create_time', '>', time() - (7 * 24 * 3600))->first();
         if (!$user) {
             $username           = self::userName();
             $user               = new self();
