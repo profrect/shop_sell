@@ -44,8 +44,7 @@ class OrderController extends BaseController
     public function create(OrdersRequest $request): JsonResponse
     {
         $request->scene('create')->validated();
-        $user = ChatUser::addUser($request->ip(), $request->input('device', ''));
-        $data = $this->orderService->create($user, $request->input());
+        $data = $this->orderService->create($this->user, $request->input());
         return apiSuccess($data);
     }
 

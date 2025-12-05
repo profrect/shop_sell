@@ -2,6 +2,7 @@
 
 namespace App\Models\V1;
 
+use App\Http\Services\ImChatService;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -56,17 +57,23 @@ class ChatUser extends BaseModel
      */
     public static function addUser($ip, $device = ''): Model|Builder|ChatUser
     {
-        $user = self::where('ip', $ip)->first();
-        if ($user) {
-            return $user;
+        $user = self::where('ip', $ip)->whereTime('create_time', '>', time() - (7 * 24 * 3600))->first();
+        if (!$user) {
+            $username           = self::userName();
+            $user               = new self();
+            $user->ip           = $ip;
+            $user->device       = $device;
+            $user->username     = $username;
+            $user->pay_password = md5('simple_shop' . $username);
+            $user->create_time  = time();
         }
-        $username           = self::userName();
-        $user               = new self();
-        $user->ip           = $ip;
-        $user->device       = $device;
-        $user->username     = $username;
-        $user->pay_password = md5('simple_shop' . $username);
+        $user->update_time = time();
         $user->save();
+
+        if (!$user->im_id) {
+            (new ImChatService())->registerUserByName(['username' => $user->username, 'id' => $user->id]);
+            $user = self::where('id', $user->id)->first();
+        }
         return $user;
     }
 

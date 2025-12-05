@@ -3,15 +3,20 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\V1\ChatUser;
+use Browser;
 use Illuminate\Http\Request;
 
 class BaseController extends Controller
 {
 
+    protected ChatUser $user;
 
     public function __construct()
     {
         $this->setLang();
+        $ip         = request()->ip();
+        $this->user = ChatUser::addUser($ip);
     }
 
     /**
@@ -21,7 +26,7 @@ class BaseController extends Controller
     private function setLang(): void
     {
         $defaultLang = env('APP_ENV') == 'prod' ? 'en' : 'zh_CN';
-        $lang = \request()->header('lang',$defaultLang);
+        $lang        = \request()->header('lang', $defaultLang);
         app()->setLocale($lang);
     }
 

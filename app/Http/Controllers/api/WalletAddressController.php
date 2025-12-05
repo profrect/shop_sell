@@ -22,8 +22,7 @@ class WalletAddressController extends BaseController
      */
     public function index(): JsonResponse
     {
-//        $list = $this->etPayService->getCurrencyInfo('USDT');
-        $list = $this->etPayService->createdUser(1);
+        $list = $this->etPayService->createdUser($this->user->id);
         return apiSuccess($list);
     }
 
