@@ -4,8 +4,6 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\V1\ChatUser;
-use Browser;
-use Illuminate\Http\Request;
 
 class BaseController extends Controller
 {
