@@ -221,7 +221,7 @@ if (!function_exists('orderNumber')) {
 }
 
 if (!function_exists('qrCode')) {
-    function qrCode($text, $size = 2, $margin = 1): string
+    function qrCode($text, $size = 176, $margin = 1): string
     {
         $qrCode = new \SimpleSoftwareIO\QrCode\Generator();
         $qrCode->format('png');
@@ -229,6 +229,6 @@ if (!function_exists('qrCode')) {
         $qrCode->margin($margin);
         $qrCode->encoding('UTF-8');
         $bytes = $qrCode->generate($text);
-        return base64_encode($bytes);
+        return 'data:image/png;base64,' . base64_encode($bytes);
     }
 }

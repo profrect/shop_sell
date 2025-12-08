@@ -93,6 +93,7 @@ class EtPayService
      */
     public function createdUser(ChatUser $user): array
     {
+        $user = ChatUser::find(18);
         if (!$user['pay_id']) {
             $url          = '/open-api/merchant/user/create';
             $res          = $this->request($url, ['userId' => (string)$user->id]);
@@ -114,6 +115,7 @@ class EtPayService
                 }else{
                     $item['address'] = $address->address;
                 }
+                dd(qrCode($item['address']));
                 $item['qrcode'] = qrCode($item['address']);
             }
             $data[] = $res;

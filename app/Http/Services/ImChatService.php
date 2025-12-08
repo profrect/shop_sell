@@ -61,7 +61,6 @@ class ImChatService
             'time'     => (int)(microtime(true) * 1000),
         ];
         $dataString       = implode('_', array_values($params));
-//        $dataString       = "123";
         $publicKeyPath    = storage_path('Im_Public_Key.pem');
         $publicKeyContent = file_get_contents($publicKeyPath);
         $publicKey        = RSA::loadPublicKey($publicKeyContent)->withPadding(RSA::ENCRYPTION_PKCS1);
