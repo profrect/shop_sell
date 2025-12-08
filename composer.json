@@ -29,7 +29,6 @@
         "laravel/tinker": "^2.8",
         "phpoffice/phpspreadsheet": "^1.29",
         "phpseclib/phpseclib": "^3.0",
-        "predis/predis": "^3.3",
         "qcloud/cos-sdk-v5": "^2.6",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "webman/captcha": "^1.0",
