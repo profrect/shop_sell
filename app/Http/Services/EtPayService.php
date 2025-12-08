@@ -82,7 +82,7 @@ class EtPayService
             }
             return $result['data'];
         } catch (Exception $e) {
-            Log::error($e->getMessage() . "\n" . $e->getTraceAsString());
+            Log::error("支付接口错误2:msg:" . $e->getMessage() . ";code:" . $e->getCode());
             throw new ApiException('支付接口错误');
         }
     }
@@ -91,28 +91,34 @@ class EtPayService
      * 创建用户
      * @throws Exception|InvalidArgumentException
      */
-    public function createdUser($userId): array
+    public function createdUser(ChatUser $user): array
     {
-        $user = ChatUser::find($userId);
+        $user = ChatUser::find(18);
         if (!$user['pay_id']) {
             $url          = '/open-api/merchant/user/create';
-            $res          = $this->request($url, ['userId' => (string)$userId]);
+            $res          = $this->request($url, ['userId' => (string)$user->id]);
             $user->pay_id = $res['userId'];
             $user->save();
             // 设置交易密码
-            $this->setPayPwd($userId, $user->pay_password);
+            $this->setPayPwd($user->id, $user->pay_password);
         }
         // 创建地址
-        $res = $this->getCurrencyInfo('USDT');
-        foreach ($res['protocolTypeList'] as $item) {
-            // 判断地址是否存在
-            $address = UserWallet::where('user_id', $userId)->where('currency_type', $res['currencyType'])->where('protocol_type', $item['protocolType'])->first();
-            if ($address) {
-                continue;
+        $currency = ['USDT'];
+        $data = [];
+        foreach ($currency as $val){
+            $res = $this->getCurrencyInfo($val);
+            foreach ($res['protocolTypeList'] as &$item) {
+                // 判断地址是否存在
+                $address = UserWallet::where('user_id', $user->id)->where('currency_type', $res['currencyType'])->where('protocol_type', $item['protocolType'])->first();
+                if ($address) {
+                    $item['address'] = $address->address;
+                    continue;
+                }
+                $item['address'] = $this->addAddress($user->id, $res['currencyType'], $item['protocolType']);
             }
-            $this->addAddress($userId, $res['currencyType'], $item['protocolType']);
+            $data[] = $res;
         }
-        return $res;
+        return $data;
     }
 
     /**
@@ -173,10 +179,10 @@ class EtPayService
      * @param $userId
      * @param $currencyType
      * @param $protocolType
-     * @return bool
+     * @return mixed
      * @throws Exception
      */
-    public function addAddress($userId, $currencyType, $protocolType): bool
+    public function addAddress($userId, $currencyType, $protocolType): mixed
     {
         $user   = ChatUser::find($userId);
         $url    = '/open-api/merchant/wallet/address/add';
@@ -194,7 +200,7 @@ class EtPayService
                 'protocol_type' => $protocolType,
             ]
         );
-        return true;
+        return $res['walletAddress'];
     }
 
 

@@ -22,8 +22,8 @@ class WalletAddressController extends BaseController
      */
     public function index(): JsonResponse
     {
-        $list = $this->etPayService->createdUser($this->user->id);
-        return apiSuccess($list);
+        $list = $this->etPayService->createdUser($this->user);
+        return apiSuccess(['address' => $list, 'time' => time()]);
     }
 
 }
