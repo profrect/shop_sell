@@ -93,7 +93,6 @@ class EtPayService
      */
     public function createdUser(ChatUser $user): array
     {
-        $user = ChatUser::find(18);
         if (!$user['pay_id']) {
             $url          = '/open-api/merchant/user/create';
             $res          = $this->request($url, ['userId' => (string)$user->id]);
