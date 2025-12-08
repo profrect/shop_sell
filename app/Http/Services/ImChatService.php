@@ -52,7 +52,7 @@ class ImChatService
      */
     public function signChat($chatId, $platform, $type, $version): array
     {
-        $params           = [
+        $params = [
             'appId'    => $this->appid,
             'chatId'   => $chatId,
             'platform' => $platform,
@@ -61,12 +61,11 @@ class ImChatService
             'time'     => (int)(microtime(true) * 1000),
         ];
         $dataString       = implode('_', array_values($params));
+//        $dataString       = "123";
         $publicKeyPath    = storage_path('Im_Public_Key.pem');
         $publicKeyContent = file_get_contents($publicKeyPath);
-        $publicKey        = RSA::loadPublicKey($publicKeyContent);
-
-        // 加密
-        $encrypted = $publicKey->encrypt($dataString);
+        $publicKey        = RSA::loadPublicKey($publicKeyContent)->withPadding(RSA::ENCRYPTION_PKCS1);
+        $encrypted        = $publicKey->encrypt($dataString);
         if (!$encrypted) {
             throw new Exception('RSA加密失败');
         }

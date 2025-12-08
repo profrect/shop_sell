@@ -219,3 +219,16 @@ if (!function_exists('orderNumber')) {
         return date('YmdHis') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
     }
 }
+
+if (!function_exists('qrCode')) {
+    function qrCode($text, $size = 2, $margin = 1): string
+    {
+        $qrCode = new \SimpleSoftwareIO\QrCode\Generator();
+        $qrCode->format('png');
+        $qrCode->size($size);
+        $qrCode->margin($margin);
+        $qrCode->encoding('UTF-8');
+        $bytes = $qrCode->generate($text);
+        return base64_encode($bytes);
+    }
+}

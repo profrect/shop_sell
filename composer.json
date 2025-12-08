@@ -31,6 +31,7 @@
         "phpseclib/phpseclib": "^3.0",
         "predis/predis": "^3.3",
         "qcloud/cos-sdk-v5": "^2.6",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "webman/captcha": "^1.0",
         "wolf-leo/phplogviewer": "^0.11.3",
         "wolfcode/authenticator": "^0.0.6"

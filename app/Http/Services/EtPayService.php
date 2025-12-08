@@ -109,11 +109,12 @@ class EtPayService
             foreach ($res['protocolTypeList'] as &$item) {
                 // 判断地址是否存在
                 $address = UserWallet::where('user_id', $user->id)->where('currency_type', $res['currencyType'])->where('protocol_type', $item['protocolType'])->first();
-                if ($address) {
+                if (!$address) {
+                    $item['address'] = $this->addAddress($user->id, $res['currencyType'], $item['protocolType']);
+                }else{
                     $item['address'] = $address->address;
-                    continue;
                 }
-                $item['address'] = $this->addAddress($user->id, $res['currencyType'], $item['protocolType']);
+                $item['qrcode'] = qrCode($item['address']);
             }
             $data[] = $res;
         }
@@ -276,9 +277,9 @@ class EtPayService
     public function getCurrencyInfo($currencyType): array
     {
         $key = 'currency_info_' . $currencyType;
-        if (Cache::store('redis')->has($key)) {
-            return Cache::store('redis')->get($key);
-        }
+//        if (Cache::store('redis')->has($key)) {
+//            return Cache::store('redis')->get($key);
+//        }
 
         $url    = '/open-api/merchant/wallet/getCurrencyInfo';
         $params = [
@@ -290,7 +291,7 @@ class EtPayService
                 unset($data['protocolTypeList'][$k]);
             }
         }
-        if ($data) Cache::store('redis')->set($key, $data, 3600 * 24);
+//        if ($data) Cache::store('redis')->set($key, $data, 3600 * 24);
         return $data;
     }
 
