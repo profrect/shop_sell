@@ -38,7 +38,7 @@ class EtPayService
     {
         return [
             'appId'     => $this->appId,
-            'timestamp' => microtime() * 1000,
+            'timestamp' => time() * 1000,
             'nonce'     => mt_rand(100000, 999999),
         ];
     }
@@ -75,15 +75,15 @@ class EtPayService
             $params         = $this->common();
             $params['sign'] = $this->sign($params, $data);
             $params         = array_merge($params, $data);
-            $res            = Http::asJson()->post($url, $params)->json();
-            $result         = json_decode($res, true);
+            $result         = Http::asJson()->post($url, $params)->json();
             if ($result['code'] != 200) {
                 Log::error("支付接口错误:msg:" . $result['msg'] . ";code:" . $result['code']);
+                throw new ApiException('支付接口错误');
             }
             return $result['data'];
         } catch (Exception $e) {
             Log::error($e->getMessage() . "\n" . $e->getTraceAsString());
-            throw new Exception('fail');
+            throw new ApiException('支付接口错误');
         }
     }
 
