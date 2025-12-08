@@ -115,7 +115,6 @@ class EtPayService
                 }else{
                     $item['address'] = $address->address;
                 }
-                dd(qrCode($item['address']));
                 $item['qrcode'] = qrCode($item['address']);
             }
             $data[] = $res;
