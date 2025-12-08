@@ -278,9 +278,9 @@ class EtPayService
     public function getCurrencyInfo($currencyType): array
     {
         $key = 'currency_info_' . $currencyType;
-//        if (Cache::store('redis')->has($key)) {
-//            return Cache::store('redis')->get($key);
-//        }
+        if (Cache::store('redis')->has($key)) {
+            return Cache::store('redis')->get($key);
+        }
 
         $url    = '/open-api/merchant/wallet/getCurrencyInfo';
         $params = [
@@ -292,7 +292,7 @@ class EtPayService
                 unset($data['protocolTypeList'][$k]);
             }
         }
-//        if ($data) Cache::store('redis')->set($key, $data, 3600 * 24);
+        if ($data) Cache::store('redis')->set($key, $data, 3600 * 24);
         return $data;
     }
 
