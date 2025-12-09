@@ -107,7 +107,7 @@ class ImChatService
     public function createdGroupChat(ChatUser $user): mixed
     {
         // 先删除30内未跟新的组群
-        $delGroups = UserChatGroup::where('created_at', '<', now()->subDays(30))->get();
+        $delGroups = UserChatGroup::where('create_time', '<', now()->subDays(30))->get();
         foreach ($delGroups as $delGroup) {
             $this->delGroupChat($delGroup->id);
             $delGroup->delete();
@@ -142,7 +142,7 @@ class ImChatService
             try {
                 $res = Http::asJson()
                     ->post("{$this->url}/api/open/create-group", $params)
-                    ->json();
+                    ->body();
                 if ($res) {
                     $group              = new UserChatGroup();
                     $group->user_id     = $user->id;
