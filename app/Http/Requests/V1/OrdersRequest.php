@@ -27,6 +27,7 @@ class OrdersRequest extends BaseRequest
     {
         return [
             'sure' => 'create',
+            'create' => 'create',
             'cancel' => 'cancel',
             'detail' => 'detail',
         ];
