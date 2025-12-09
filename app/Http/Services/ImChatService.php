@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Models\SystemAdmin;
 use App\Models\V1\ChatUser;
+use App\Models\V1\UserChatGroup;
 use Exception;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Http;
@@ -52,7 +53,7 @@ class ImChatService
      */
     public function signChat($chatId, $platform, $type, $version): array
     {
-        $params = [
+        $params           = [
             'appId'    => $this->appid,
             'chatId'   => $chatId,
             'platform' => $platform,
@@ -74,6 +75,90 @@ class ImChatService
             'appId'  => $this->appid,
             'time'   => $params['time'],
         ];
+    }
+
+    /**
+     * 删除群组
+     * @param $groupId
+     * @return bool
+     */
+    public function delGroupChat($groupId): bool
+    {
+        $params = [
+            'appId'   => (string)$this->appid,
+            'groupId' => (string)$groupId,
+        ];
+
+        try {
+            Http::asJson()->post($this->url . '/api/open/dismiss-group', $params)->json();
+            // 删除群组
+            return true;
+        } catch (\Exception $e) {
+            Log::error("msg:" . $e->getMessage() . ';file:' . $e->getFile() . ';line:' . $e->getLine() . ';trace:' . $e->getTraceAsString() . ';code:' . $e->getCode() . ';');
+            return false;
+        }
+    }
+
+    /**
+     * 创建群组
+     * @param ChatUser $user
+     * @return mixed
+     */
+    public function createdGroupChat(ChatUser $user): mixed
+    {
+        // 先删除30内未跟新的组群
+        $delGroups = UserChatGroup::where('created_at', '<', now()->subDays(30))->get();
+        foreach ($delGroups as $delGroup) {
+            $this->delGroupChat($delGroup->id);
+            $delGroup->delete();
+        }
+        //判断组群是否存在
+        $group = UserChatGroup::where('user_id', $user->id)->first();
+        if ($group) {
+            $group->update_time = time();
+            $group->save();
+            return $group->group_id;
+        } else {
+            $adminImIds = SystemAdmin::whereNotNull('im_id')
+                ->where('status', '1')
+                ->select('im_id', 'id')->get();
+            if ($adminImIds->isEmpty()) {
+                return "";
+            }
+
+            $members   = $adminImIds->map(fn($id) => (string)$id)->toArray();
+            $adminIds  = $adminImIds->pluck('id')->toArray();
+            $members[] = $user->im_id;
+
+            $name   = '咨询客服群';
+            $params = [
+                'appId'        => (string)$this->appid,
+                'name'         => $name,
+                'ownerId'      => (string)$adminImIds->first(),
+                'memberIdList' => $members,
+                'avatar'       => '',
+            ];
+
+            try {
+                $res = Http::asJson()
+                    ->post("{$this->url}/api/open/create-group", $params)
+                    ->json();
+                if ($res) {
+                    $group              = new UserChatGroup();
+                    $group->user_id     = $user->id;
+                    $group->group_id    = $res;
+                    $group->name        = $name;
+                    $group->admins      = implode(',', $adminIds);
+                    $group->create_time = time();
+                    $group->update_time = time();
+                    $group->save();
+                }
+                return $res;
+            } catch (\Exception $e) {
+                Log::error("创建群组异常：{$e->getMessage()}");
+                return "";
+            }
+        }
     }
 
 

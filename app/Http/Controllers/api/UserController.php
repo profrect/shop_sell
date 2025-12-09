@@ -19,10 +19,12 @@ class UserController extends BaseController
      */
     public function getSign(Request $request): JsonResponse
     {
-        $platform = $request->input('platform', 'web');
-        $type     = $request->input('type', 'web');
-        $version  = $request->input('version', '1.0.0');
-        $sign     = (new ImChatService())->signChat($this->user->im_id, $platform, $type, $version);
+        $platform      = $request->input('platform', 'web');
+        $type          = $request->input('type', 'web');
+        $version       = $request->input('version', '1.0.0');
+        $sign          = (new ImChatService())->signChat($this->user->im_id, $platform, $type, $version);
+        $group         = (new ImChatService())->createdGroupChat($this->user);
+        $sign['group'] = $group;
         return apiSuccess($sign);
     }
 }

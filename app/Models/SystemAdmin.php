@@ -70,7 +70,7 @@ class SystemAdmin extends BaseModel
     private static function registerIm(self $admin): void
     {
         $username = ChatUser::userName('admin', $admin->username);
-        (new ImChatService())->registerUserByName(['username' => $username, 'id' => $admin->id]);
+        (new ImChatService())->registerUserByName(['username' => $username, 'id' => $admin->id], 'admin');
     }
 
     public function getAuthList(): array
