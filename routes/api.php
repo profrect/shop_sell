@@ -14,7 +14,7 @@ Route::prefix('goods')->group(function () {
 });
 // 订单
 Route::prefix('orders')->group(function () {
-    Route::post('sure', [OrderController::class, 'create'])->name('确认订单');
+    Route::post('sure', [OrderController::class, 'sure'])->name('确认订单');
     Route::post('create', [OrderController::class, 'create'])->name('创建订单');
     Route::get('detail/{order_id}', [OrderController::class, 'detail'])->name('订单详情');
     Route::any('payNotify', [OrderController::class, 'payNotify'])->name('支付回调');
