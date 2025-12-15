@@ -113,36 +113,54 @@ class ImChatService
             $delGroup->delete();
         }
         //判断组群是否存在
-        $group = UserChatGroup::where('user_id', $user->id)->first();
+        $group    = UserChatGroup::where('user_id', $user->id)->first();
+        $admins   = SystemAdmin::whereNotNull('im_id')->where('status', '1')->select('im_id', 'id')->get();
+        $adminIds = $admins->pluck('id')->toArray();
         if ($group) {
+            // 如果群存在，维护成员
+            $old         = explode(',', $group->admins);
+            $addAdminIds = array_diff($adminIds, $old);
+            $delAdminIds = array_diff($old, $adminIds);
+
+            // 处理添加
+            if ($addAdminIds) {
+                $addChatIds = SystemAdmin::whereIn('id', $addAdminIds)->pluck('im_id');
+                $this->groupAddMember($group->group_id, $addChatIds);
+            }
+
+            // 处理删除
+            if ($delAdminIds) {
+                $delChatIds = (new SystemAdmin())->whereIn('id', $delAdminIds)->pluck('im_id');
+                $this->groupDelMember($group->group_id, $delChatIds);
+            }
+            // 更新群组
+            sort($adminIds);
+            sort($old);
+            if ($adminIds != $old) {
+                $group->admins = implode(',', $adminIds);
+            }
             $group->update_time = time();
             $group->save();
             return $group->group_id;
         } else {
-            $adminImIds = SystemAdmin::whereNotNull('im_id')
-                ->where('status', '1')
-                ->select('im_id', 'id')->get();
-            if ($adminImIds->isEmpty()) {
+            if ($admins->isEmpty()) {
                 return "";
             }
 
-            $members   = $adminImIds->map(fn($id) => (string)$id)->toArray();
-            $adminIds  = $adminImIds->pluck('id')->toArray();
+            $members   = $admins->map(fn($id) => (string)$id)->toArray();
             $members[] = $user->im_id;
 
-            $name   = '咨询客服群';
+            $name   = '咨询客服群【' . $user->username . '】';
             $params = [
                 'appId'        => (string)$this->appid,
                 'name'         => $name,
-                'ownerId'      => (string)$adminImIds->first(),
+                'ownerId'      => (string)$admins->first(),
                 'memberIdList' => $members,
                 'avatar'       => '',
             ];
 
             try {
-                $res = Http::asJson()
-                    ->post("{$this->url}/api/open/create-group", $params)
-                    ->body();
+                $res = Http::asJson()->post("{$this->url}/api/open/create-group", $params)->body();
                 if ($res) {
                     $group              = new UserChatGroup();
                     $group->user_id     = $user->id;
@@ -158,6 +176,48 @@ class ImChatService
                 Log::error("创建群组异常：{$e->getMessage()}");
                 return "";
             }
+        }
+    }
+
+    /**
+     * 群维护成员
+     * @param $groupId
+     * @param $memberIdList
+     * @return bool
+     */
+    public function groupAddMember($groupId, $memberIdList): bool
+    {
+        $params = [
+            'appId'        => (string)$this->appid,
+            'groupId'      => (string)$groupId,
+            'memberIdList' => $memberIdList
+        ];
+        try {
+            Http::asJson()->post($this->url . '/api/open/add-group-member', $params)->json();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * 群删除成员
+     * @param $groupId
+     * @param $memberIdList
+     * @return bool
+     */
+    public function groupDelMember($groupId, $memberIdList): bool
+    {
+        $params = [
+            'appId'        => (string)$this->appid,
+            'groupId'      => (string)$groupId,
+            'memberIdList' => $memberIdList
+        ];
+        try {
+            Http::asJson()->post($this->url . '/api/open/remove-group-member', $params)->json();
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 
