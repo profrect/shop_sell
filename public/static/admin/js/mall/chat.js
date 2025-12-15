@@ -109,9 +109,9 @@ define(["jquery", "easy-admin", "etChatSDK"], function ($, ea, etChatSDK) {
                         data-name="${item.nickname}"
                         data-target-id="${item.targetId}"
                         data-session-type="${item.type}"
-                        data-avatar="${item.avatar ? (ossUrl + '/' + item.avatar) : '/assets/img/avatar.png'}"
+                        data-avatar="static/admin/images/head.jpg"
                     >
-                        <img src="${item.avatar ? (ossUrl + '/' + item.avatar) : '/assets/img/avatar.png'}" alt="" class="item-img">
+                        <img src="/static/admin/images/head.jpg" alt="" class="item-img">
                         <div class="item-right">
                             <div class="right-one">
                                 <div class="item-name">${item.nickname}</div>
@@ -140,7 +140,7 @@ define(["jquery", "easy-admin", "etChatSDK"], function ($, ea, etChatSDK) {
 
                     targetName = $(this).data('name');
                     targetId = $(this).data('target-id');
-                    targetAvatar = $(this).data('avatar');
+                    targetAvatar = 'static/admin/images/head.jpg';
                     sessionType = $(this).data('session-type');
 
                     selectSession();

@@ -2,13 +2,10 @@
 <div class="panel-body">
     <div class="left-box">
         <form action="" method="get" class="sidebar-form" onsubmit="return false;">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="输入关键词以搜索...">
-                <span class="input-group-btn">
-                        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-                    </span>
-                <div class="menuresult list-group sidebar-form hide">
-                </div>
+            <div class="layui-form-item" style="display: flex; align-items: center;">
+                <input type="text" name="q" class="layui-input" style="width: 70%;" placeholder="输入关键词以搜索...">
+                <button type="submit" name="search" id="search-btn" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-search"></i></button>
+                <div class="menuresult list-group sidebar-form hide"></div>
             </div>
         </form>
         <div class="left-list"></div>
@@ -16,13 +13,13 @@
     <div class="right-box">
         <div class="right-head">
             <div class="head-left">
-                <img src="" alt="" class="left-img">
+                <img src="/public/static/admin/images/head.jpg" alt="" class="left-img">
                 <div>
-                    <div class="left-name">李心怡</div>
+                    <div class="left-name"></div>
                     <!--                        <div class="left-online">在线</div>-->
                 </div>
             </div>
-            <img src="/static/more.png" alt="" class="head-right">
+            <img src="/public/static/more.png" alt="" class="head-right">
         </div>
         <div class="message-list">
 
@@ -34,11 +31,11 @@
                     <label>
                         <input type="file" class="upload-input" accept="image/*, .jpg, .jpeg, .png"
                                style="display: none;">
-                        <img src="/static/img.png" alt="点击上传">
+                        <img src="/public/static/img.png" alt="点击上传">
                     </label>
                 </div>
                 <div class="operate-right">
-                    <img src="/static/send.png" alt="">
+                    <img src="/public/static/send.png" alt="">
                     <div>发送</div>
                 </div>
             </div>
@@ -130,11 +127,11 @@
 
     .right-box {
         width: calc(100% - 292px);
-        height: 100%;
+        /*height: 100%;*/
         background: #FFFFFF;
         border-radius: 8px;
         padding: 20px 20px 10px;
-        display: block;
+        display: none;
 
         .right-head {
             display: flex;
@@ -165,7 +162,7 @@
         }
 
         .message-list {
-            height: calc(100% - 158px);
+            height: calc(100% - 218px);
             overflow-y: auto;
             display: flex;
             flex-direction: column;

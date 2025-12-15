@@ -6,6 +6,8 @@ use App\Http\Services\ImChatService;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 /**
  * @property int $id
@@ -57,8 +59,24 @@ class ChatUser extends BaseModel
      */
     public static function addUser($ip, $device = ''): Model|Builder|ChatUser
     {
-        $user = self::where('ip', $ip)->where('create_time', '>', time() - (7 * 24 * 3600))->first();
-        if (!$user) {
+        $cacheKey    = "user_by_ip:{$ip}";
+        $lockKey     = "add_user_lock:{$ip}";
+        $cacheExpire = 60 * 60;          // 秒，缓存有效期
+
+        $cachedUser = Redis::get($cacheKey);
+        if ($cachedUser) {
+            return unserialize($cachedUser);
+        }
+
+        $lock = Redis::set($lockKey, 1, 'EX', $cacheExpire, 'NX');
+
+        // 查询数据库中最近的用户
+        $timeLimit = 7 * 24 * 3600; // 7 天
+        $user      = self::where('ip', $ip)
+            ->where('create_time', '>', time() - $timeLimit)
+            ->first();
+
+        if (!$user && $lock) {
             $username           = self::userName();
             $user               = new self();
             $user->ip           = $ip;
@@ -67,14 +85,20 @@ class ChatUser extends BaseModel
             $user->pay_password = md5('simple_shop' . $username);
             $user->create_time  = time();
         }
-        $user->update_time = time();
-        $user->save();
-
-        if (!$user->im_id) {
-            (new ImChatService())->registerUserByName(['username' => $user->username, 'id' => $user->id]);
-            $user = self::where('id', $user->id)->first();
+        if ($user) {
+            $user->update_time = time();
+            $user->save();
+            if (!$user->im_id) {
+                (new ImChatService())->registerUserByName([
+                    'username' => $user->username,
+                    'id'       => $user->id,
+                ]);
+                $user = self::find($user->id);
+            }
+            Redis::setex($cacheKey, $cacheExpire, serialize($user));
         }
         return $user;
     }
+
 
 }

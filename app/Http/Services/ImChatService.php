@@ -150,7 +150,7 @@ class ImChatService
             $members   = $admins->pluck('im_id')->toArray();
             $members[] = $user->im_id;
 
-            $name   = '咨询客服群【' . $user->username . '】';
+            $name   = '咨询客服群【' . $user->id . '】';
             $params = [
                 'appId'        => (string)$this->appid,
                 'name'         => $name,
