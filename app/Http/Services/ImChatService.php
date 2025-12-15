@@ -148,7 +148,6 @@ class ImChatService
             }
 
             $members   = $admins->pluck('im_id')->toArray();
-            dd($members);
             $members[] = $user->im_id;
 
             $name   = '咨询客服群【' . $user->username . '】';
