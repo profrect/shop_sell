@@ -147,7 +147,7 @@ class ImChatService
                 return "";
             }
 
-            $members   = $admins->map(fn($id) => (string)$id)->toArray();
+            $members   = $admins->pluck('im_id')->toArray();
             $members[] = $user->im_id;
 
             $name   = '咨询客服群【' . $user->username . '】';
