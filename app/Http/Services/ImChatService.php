@@ -154,7 +154,7 @@ class ImChatService
             $params = [
                 'appId'        => (string)$this->appid,
                 'name'         => $name,
-                'ownerId'      => (string)$admins->first(),
+                'ownerId'      => $admins->first()->im_id,
                 'memberIdList' => $members,
                 'avatar'       => '',
             ];
