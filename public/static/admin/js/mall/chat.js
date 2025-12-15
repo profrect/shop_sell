@@ -140,7 +140,7 @@ define(["jquery", "easy-admin", "etChatSDK"], function ($, ea, etChatSDK) {
 
                     targetName = $(this).data('name');
                     targetId = $(this).data('target-id');
-                    targetAvatar = 'static/admin/images/head.jpg';
+                    targetAvatar = '/static/admin/images/head.jpg';
                     sessionType = $(this).data('session-type');
 
                     selectSession();

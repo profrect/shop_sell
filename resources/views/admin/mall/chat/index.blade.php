@@ -13,13 +13,13 @@
     <div class="right-box">
         <div class="right-head">
             <div class="head-left">
-                <img src="/public/static/admin/images/head.jpg" alt="" class="left-img">
+                <img src="/static/admin/images/head.jpg" alt="" class="left-img">
                 <div>
                     <div class="left-name"></div>
                     <!--                        <div class="left-online">在线</div>-->
                 </div>
             </div>
-            <img src="/public/static/more.png" alt="" class="head-right">
+            <img src="/static/more.png" alt="" class="head-right">
         </div>
         <div class="message-list">
 
@@ -31,11 +31,11 @@
                     <label>
                         <input type="file" class="upload-input" accept="image/*, .jpg, .jpeg, .png"
                                style="display: none;">
-                        <img src="/public/static/img.png" alt="点击上传">
+                        <img src="/static/img.png" alt="点击上传">
                     </label>
                 </div>
                 <div class="operate-right">
-                    <img src="/public/static/send.png" alt="">
+                    <img src="/static/send.png" alt="">
                     <div>发送</div>
                 </div>
             </div>
