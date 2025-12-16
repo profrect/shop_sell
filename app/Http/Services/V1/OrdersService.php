@@ -39,11 +39,11 @@ class OrdersService
 //            if ($goodDetail->stock < $good['num']) throw new ApiException(__('goods.stock_insufficient'));       // 库存不足
             if ($goodDetail->status != BaseModel::STATUS_ENABLE) throw new ApiException(__('goods.not_on_sale'));// 状态异常
 
-            $goods_money         = bcmul($goodDetail->market_price, $good['num'], 2);
+            $goods_money         = bcmul($goodDetail->discount_price, $good['num'], 2);
             $data['goods'][]     = [
                 'id'       => $good['id'],
                 'num'      => $good['num'],
-                'price'    => $goodDetail->market_price,
+                'price'    => $goodDetail->discount_price,
                 'total'    => $goods_money,
                 'title'    => $goodDetail->title,
                 'logo'     => $goodDetail->logo,
