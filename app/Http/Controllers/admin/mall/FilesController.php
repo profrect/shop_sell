@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\admin\mall;
 
 use App\Http\Controllers\common\AdminController;
+use App\Http\Services\TriggerService;
+use App\Models\SystemConfig;
 use App\Models\V1\Files;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -16,29 +18,40 @@ class FilesController extends AdminController
     public function initialize(): void
     {
         parent::initialize();
-        $this->model = new Files();
-        $this->assign(['types' => Files::$types]);
+        $this->model  = new SystemConfig();
     }
 
-    public function index(): JsonResponse|View
+    public function index(): View
     {
-        if (!request()->ajax()) return $this->fetch();
-        if (request()->input('selectFields')) {
-            return $this->selectList();
+        return $this->fetch();
+    }
+
+    public function save(): JsonResponse
+    {
+        if (!request()->ajax()) return $this->error();
+        $post         = request()->post();
+        $notAddFields = ['_token', 'file', 'group'];
+        try {
+            $group = $post['group'] ?? '';
+            if (empty($group)) return $this->error('保存失败');
+            foreach ($post as $key => $val) {
+                if (in_array($key, $notAddFields)) continue;
+                if ($this->model->where('name', $key)->count()) {
+                    $this->model->where('name', $key)->update(['value' => $val,]);
+                } else {
+                    $this->model->insert(
+                        [
+                            'name'  => $key,
+                            'value' => $val,
+                            'group' => $group,
+                        ]);
+                }
+            }
+            TriggerService::updateSysconfig();
+        } catch (\Exception $e) {
+            return $this->error('保存失败:' . $e->getMessage());
         }
-        list($page, $limit, $where) = $this->buildTableParams();
-        $count = $this->model->where($where)->count();
-        $list  = $this->model->where($where)->orderByDesc($this->order)->paginate($limit)->items();
-        foreach ($list as &$item) {
-            $item['type_name'] = Files::$types[$item['type']];
-        }
-        $data  = [
-            'code'  => 0,
-            'msg'   => '',
-            'count' => $count,
-            'data'  => $list,
-        ];
-        return json($data);
+        return $this->success('保存成功');
     }
 
 }

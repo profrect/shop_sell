@@ -12,7 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $title 商品名称
  * @property string|null $logo 商品logo
  * @property string|null $images 商品图片 以 | 做分割符号
- * @property string|null $describe 商品描述
+ * @property string|null $describe 商品简介
+ * @property string|null $content 商品描述
  * @property string|null $market_price 市场价
  * @property string|null $discount_price 折扣价
  * @property int|null $sales 销量
@@ -32,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static Builder|MallGoods newQuery()
  * @method static Builder|MallGoods query()
  * @method static Builder|MallGoods whereCateId($value)
+ * @method static Builder|MallGoods whereContent($value)
  * @method static Builder|MallGoods whereCreateTime($value)
  * @method static Builder|MallGoods whereDeleteTime($value)
  * @method static Builder|MallGoods whereDescribe($value)

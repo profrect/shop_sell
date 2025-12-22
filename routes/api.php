@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\CountryController;
 use App\Http\Controllers\api\FileController;
 use App\Http\Controllers\api\GoodsController;
 use App\Http\Controllers\api\IconController;
@@ -35,5 +36,8 @@ Route::prefix('icon')->group(function () {
 Route::prefix('user')->group(function () {
     Route::post('getSign', [UserController::class, 'getSign'])->name('获取IM签名');
 });
-
+// 国家
+Route::prefix('country')->group(function () {
+    Route::get('', [CountryController::class, 'list'])->name('获取国家列表');
+});
 

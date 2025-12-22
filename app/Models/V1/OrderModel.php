@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use App\Models\MallGoods;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 
@@ -30,6 +31,8 @@ use Illuminate\Support\Facades\DB;
  * @property string $create_time
  * @property string $update_time
  * @property string $delete_time
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\V1\OrdersGoods> $goods
+ * @property-read int|null $goods_count
  * @method static Builder|OrderModel newModelQuery()
  * @method static Builder|OrderModel newQuery()
  * @method static Builder|OrderModel query()
@@ -72,9 +75,18 @@ class OrderModel extends BaseModel
      * 订单商品
      * @return HasMany
      */
-    public function getGoods(): HasMany
+    public function goods(): HasMany
     {
         return $this->hasMany(OrdersGoods::class, 'order_id', 'id');
+    }
+
+    /**
+     * 订单地址
+     * @return HasOne
+     */
+    public function address(): HasOne
+    {
+        return $this->hasOne(OrderAddress::class, 'order_id', 'id');
     }
 
     /**

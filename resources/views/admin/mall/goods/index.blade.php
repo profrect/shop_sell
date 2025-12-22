@@ -5,7 +5,7 @@
                data-auth-add="{{auths('mall.goods/add')}}"
                data-auth-edit="{{auths('mall.goods/edit')}}"
                data-auth-delete="{{auths('mall.goods/delete')}}"
-               data-auth-stock="{{auths('mall.goods/stock')}}"
+{{--               data-auth-stock="{{auths('mall.goods/stock')}}"--}}
                lay-filter="currentTable">
         </table>
     </div>

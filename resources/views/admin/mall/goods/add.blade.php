@@ -39,30 +39,23 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">市场价格</label>
+            <label class="layui-form-label">价格</label>
             <div class="layui-input-block">
-                <input type="text" name="market_price" class="layui-input" lay-verify="required" placeholder="请输入市场价格" value="0">
+                <input type="text" name="discount_price" class="layui-input" lay-verify="required" placeholder="请输入价格" value="0">
             </div>
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">折扣价格</label>
+            <label class="layui-form-label">商品简介</label>
             <div class="layui-input-block">
-                <input type="text" name="discount_price" class="layui-input" lay-verify="required" placeholder="请输入折扣价格" value="0">
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">虚拟销量</label>
-            <div class="layui-input-block">
-                <input type="text" name="virtual_sales" class="layui-input" lay-verify="required" placeholder="请输入虚拟销量" value="0">
+                <textarea name="describe" class="layui-textarea" placeholder="请输入商品简介">{{$row['describe']}}</textarea>
             </div>
         </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label">商品描述</label>
             <div class="layui-input-block">
-                {!!editor_textarea('','describe') !!}
+                {!!editor_textarea('','content') !!}
             </div>
         </div>
 

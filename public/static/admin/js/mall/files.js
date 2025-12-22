@@ -1,39 +1,31 @@
-define(["jquery", "easy-admin"], function ($, ea) {
+define(["jquery", "easy-admin", "vue"], function ($, ea, Vue) {
 
-    var init = {
-        table_elem: '#currentTable',
-        table_render_id: 'currentTableRenderId',
-        index_url: 'mall.files/index',
-        add_url: 'mall.files/add',
-        edit_url: 'mall.files/edit',
-        delete_url: '',
-        export_url: '',
-        modify_url: '',
-    };
+    var form = layui.form;
 
     var Controller = {
 
         index: function () {
-            ea.table.render({
-                init: init,
-                cols: [[
-                    {type: 'checkbox'},
-                    {field: 'id', title: 'id', search: false},
-                    {field: 'type_name', title: '图片类型', search: false},
-                    {field: 'title', title: '标题', search: false},
-                    {field: 'url', title: '地址', search: false, templet: ea.table.image},
-                    {width: 250, title: '操作', templet: ea.table.tool},
-                ]],
+            var _group = 'mall_set'
+            var element = layui.element;
+            element.on('tab(docDemoTabBrief)', function (data) {
+                _group = $(this).data('group')
+            });
+
+            var app = new Vue({
+                el: '#app',
+                data: {}
+            });
+
+            // form.on("radio(upload_type)", function (data) {
+            //     app.upload_type = this.value;
+            // });
+
+            form.on("submit", function (data) {
+                data.field['group'] = _group
             });
 
             ea.listen();
-        },
-        add: function () {
-            ea.listen();
-        },
-        edit: function () {
-            ea.listen();
-        },
+        }
     };
     return Controller;
 });

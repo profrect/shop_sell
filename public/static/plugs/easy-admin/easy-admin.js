@@ -734,7 +734,7 @@ define(["jquery", "tableSelect"], function ($, tableSelect) {
                 } catch (e) {
                     var value = undefined;
                 }
-                return '<span>￥' + value + '</span>';
+                return '<span>$' + value + '</span>';
             },
             percent: function (data, option) {
                 var option = data.LAY_COL || {};
