@@ -44,7 +44,10 @@ class GoodsController extends BaseController
      */
     public function detail($id): JsonResponse
     {
-        $detail = MallGoods::query()->where('id', $id)->first()?->toArray();
+        $detail = MallGoods::query()->with(['getFormat' => function ($query) {
+            $query->with(['format']);
+            return $query;
+        }])->where('id', $id)->first()?->toArray();
         return apiSuccess($detail);
     }
 

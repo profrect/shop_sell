@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -71,6 +72,11 @@ class MallGoods extends BaseModel
     public function cate(): HasOne
     {
         return $this->hasOne(MallCate::class, 'id', 'cate_id')->select('id', 'title');
+    }
+
+    public function getFormat(): HasMany
+    {
+        return $this->hasMany(GoodsFormat::class, 'goods_id', 'id')->select(['id','goods_id','format_id','sort'])->orderByDesc('sort');
     }
 
 }

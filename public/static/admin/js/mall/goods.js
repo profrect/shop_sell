@@ -9,7 +9,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
         delete_url: 'mall.goods/delete',
         export_url: 'mall.goods/export',
         modify_url: 'mall.goods/modify',
-        // stock_url: 'mall.goods/stock',
+        format_url: 'mall.goods/format',
     };
 
     var Controller = {
@@ -60,6 +60,13 @@ define(["jquery", "easy-admin"], function ($, ea) {
                                     method: 'open',
                                     auth: 'edit',
                                     class: 'layui-btn layui-btn-xs layui-btn-success',
+                                },
+                                {
+                                    text: '商品规格',
+                                    url: init.format_url,
+                                    method: 'open',
+                                    auth: 'spec',
+                                    class: 'layui-btn layui-btn-xs layui-btn-normal',
                                 }
                             ],
                             'delete']
@@ -74,7 +81,10 @@ define(["jquery", "easy-admin"], function ($, ea) {
         },
         edit: function () {
             ea.listen();
-        }
+        },
+        format: function () {
+            ea.listen();
+        },
     };
     return Controller;
 });

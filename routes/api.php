@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 //商品
 Route::prefix('goods')->group(function () {
     Route::get('', [GoodsController::class, 'list'])->name('商品列表');
+    Route::get('detail/{id}', [GoodsController::class, 'detail'])->name('商品详情');
 });
 // 订单
 Route::prefix('orders')->group(function () {
