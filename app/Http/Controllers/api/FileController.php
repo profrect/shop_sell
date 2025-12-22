@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Models\SystemConfig;
 use App\Models\V1\Files;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class FileController extends BaseController
      */
     public function list(): JsonResponse
     {
-        $list = Files::query()->get()?->toArray();
+        $list = SystemConfig::where('group', 'mall_set')->select(['name','value'])->get()->keyBy('name')->toArray();
         return apiSuccess($list);
     }
 

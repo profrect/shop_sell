@@ -20,8 +20,8 @@ Route::prefix('orders')->group(function () {
     Route::get('detail/{order_id}', [OrderController::class, 'detail'])->name('订单详情');
     Route::any('payNotify', [OrderController::class, 'payNotify'])->name('支付回调');
 });
-// 附件
-Route::prefix('file')->group(function () {
+// 文案
+Route::prefix('set')->group(function () {
     Route::get('', [FileController::class, 'list'])->name('图片列表');
 });
 //钱包地址

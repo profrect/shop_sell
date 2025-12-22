@@ -48,7 +48,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">商品简介</label>
             <div class="layui-input-block">
-                <textarea name="describe" class="layui-textarea" placeholder="请输入商品简介">{{$row['describe']}}</textarea>
+                <textarea name="describe" class="layui-textarea" placeholder="请输入商品简介"></textarea>
             </div>
         </div>
 
