@@ -48,6 +48,7 @@ class GoodsController extends BaseController
             $query->with(['format']);
             return $query;
         }])->where('id', $id)->first()?->toArray();
+        $detail['discount'] = bcdiv($detail['discount_price'], $detail['market_price'], 2);
         return apiSuccess($detail);
     }
 

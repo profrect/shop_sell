@@ -76,7 +76,7 @@ class MallGoods extends BaseModel
 
     public function getFormat(): HasMany
     {
-        return $this->hasMany(GoodsFormat::class, 'goods_id', 'id')->select(['id','goods_id','format_id','sort'])->orderByDesc('sort');
+        return $this->hasMany(GoodsFormat::class, 'goods_id', 'id')->select(['id','goods_id','format_id','sort','content'])->orderByDesc('sort');
     }
 
 }
