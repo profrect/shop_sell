@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\DB;
  * @property int $finish_time 完成时间
  * @property string $username 收件人
  * @property string|null $mobile 收件人联系方式
- * @property string|null $address 收件地址
+ * @property \App\Models\V1\OrderAddress|null $address 收件地址
  * @property int|null $created_time
  * @property int|null $updated_time
  * @property string $create_time

@@ -6,6 +6,8 @@ use App\Exceptions\ApiException;
 use App\Http\Requests\V1\OrdersRequest;
 use App\Http\Services\EtPayService;
 use App\Http\Services\V1\OrdersService;
+use App\Http\Services\V1\RedisService;
+use App\Http\Services\V1\SfPayService;
 use App\Models\V1\ChatUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,7 +46,11 @@ class OrderController extends BaseController
     public function create(OrdersRequest $request): JsonResponse
     {
         $request->scene('create')->validated();
+        $key = 'created_order_' . $this->user->id;
+        $val = RedisService::lock($key);
+        if ($val === false) return apiError('请勿重复提交');
         $data = $this->orderService->create($this->user, $request->input());
+        RedisService::unlock($key, $val);
         return apiSuccess($data);
     }
 
@@ -61,7 +67,7 @@ class OrderController extends BaseController
     }
 
     /**
-     * 支付回调
+     * etpay支付回调
      * @return void
      * @throws Throwable
      * @throws InvalidArgumentException
@@ -70,13 +76,54 @@ class OrderController extends BaseController
     {
         try {
             $params = request()->input();
-            Log::info("支付回调参数:" . json_encode($params));
-            $res    = (new EtPayService())->notify($params);
+            Log::info("支付回调参数:", ['params' => $params]);
+            $res = (new EtPayService())->notify($params);
             if ($res) die("success");
             die("fail");
         } catch (\Exception $e) {
-            Log::error("支付回调错误:" . $e->getMessage() . ';file:' . $e->getFile() . ';line:' . $e->getLine() . ';trace:' . $e->getTraceAsString() . ';code:' . $e->getCode());
+            Log::error("etPay支付回调错误:" . $e->getMessage() . ';file:' . $e->getFile() . ';line:' . $e->getLine() . ';trace:' . $e->getTraceAsString() . ';code:' . $e->getCode());
             die("fail");
+        }
+    }
+
+    /**
+     * sfpay法币支付回调
+     * @return void
+     * @throws Throwable
+     * @throws InvalidArgumentException
+     */
+    public function sfPayNotify(): void
+    {
+        try {
+            $params = request()->input();
+            Log::info("支付回调参数:", ['params' => $params]);
+            $res = (new SfPayService())->notify($params);
+            if ($res) die("SUCCESS");
+            die("FAIL");
+        } catch (\Exception $e) {
+            Log::error("sfpay支付回调错误:" . $e->getMessage() . ';file:' . $e->getFile() . ';line:' . $e->getLine() . ';trace:' . $e->getTraceAsString() . ';code:' . $e->getCode());
+            die("FAIL");
+        }
+    }
+
+
+    /**
+     * sfpay数字支付回调
+     * @return void
+     * @throws Throwable
+     * @throws InvalidArgumentException
+     */
+    public function sfPayDigitalNotify(): void
+    {
+        try {
+            $params = request()->input();
+            Log::info("支付回调参数:", ['params' => $params]);
+            $res = (new SfPayService())->digitalNotify($params);
+            if ($res) die("SUCCESS");
+            die("FAIL");
+        } catch (\Exception $e) {
+            Log::error("sfpay支付回调错误:" . $e->getMessage() . ';file:' . $e->getFile() . ';line:' . $e->getLine() . ';trace:' . $e->getTraceAsString() . ';code:' . $e->getCode());
+            die("FAIL");
         }
     }
 

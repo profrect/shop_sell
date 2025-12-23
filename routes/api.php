@@ -19,7 +19,9 @@ Route::prefix('orders')->group(function () {
     Route::post('sure', [OrderController::class, 'sure'])->name('确认订单');
     Route::post('create', [OrderController::class, 'create'])->name('创建订单');
     Route::get('detail/{order_id}', [OrderController::class, 'detail'])->name('订单详情');
-    Route::any('payNotify', [OrderController::class, 'payNotify'])->name('支付回调');
+    Route::any('payNotify', [OrderController::class, 'payNotify'])->middleware('redis.lock:payNotify:{orderNo},15')->name('etPay支付回调');
+    Route::post('sfPayNotify', [OrderController::class, 'sfPayNotify'])->middleware('redis.lock:sfPayNotify:{merchant_order_sn},15')->name('sfPay法币支付回调');
+    Route::post('digitalNotify', [OrderController::class, 'digitalNotify'])->middleware('redis.lock:digitalNotify:{merchant_order_sn},15')->name('sfPay数字货币支付回调');
 });
 // 文案
 Route::prefix('set')->group(function () {
