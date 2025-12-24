@@ -129,19 +129,19 @@ define(["jquery", "easy-admin", "echarts", "echarts-theme", "miniAdmin", "miniTa
                             name: '新增用户',
                             type: 'line',
                             stack: '总量',
-                            data: [120, 132, 101, 134, 90, 230, 210]
+                            data: []
                         },
                         {
                             name: '每日订单',
                             type: 'line',
                             stack: '总量',
-                            data: [220, 182, 191, 234, 290, 330, 310]
+                            data: []
                         },
                         {
                             name: '每日金额',
                             type: 'line',
                             stack: '总量',
-                            data: [150, 232, 201, 154, 190, 330, 410]
+                            data: []
                         },
                     ]
                 };

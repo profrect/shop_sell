@@ -4,7 +4,8 @@
         <form action="" method="get" class="sidebar-form" onsubmit="return false;">
             <div class="layui-form-item" style="display: flex; align-items: center;">
                 <input type="text" name="q" class="layui-input" style="width: 70%;" placeholder="输入关键词以搜索...">
-                <button type="submit" name="search" id="search-btn" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-search"></i></button>
+                <button type="submit" name="search" id="search-btn" class="layui-btn layui-btn-primary"><i
+                        class="layui-icon layui-icon-search"></i></button>
                 <div class="menuresult list-group sidebar-form hide"></div>
             </div>
         </form>
@@ -13,6 +14,7 @@
     <div class="right-box">
         <div class="right-head">
             <div class="head-left">
+                <span class="back-btn">&#8592;</span>
                 <img src="/static/admin/images/head.jpg" alt="" class="left-img">
                 <div>
                     <div class="left-name"></div>
@@ -50,6 +52,7 @@
         display: flex;
         gap: 12px;
         height: calc(100vh - 32px);
+        overflow: hidden;
     }
 
     .left-box {
@@ -109,11 +112,18 @@
                         }
 
                         .item-state {
-                            width: 8px;
-                            height: 8px;
-                            border-radius: 50%;
-                            background-color: #07c160;
+                            min-width: 16px;
+                            height: 16px;
+                            padding: 0 4px;
+                            border-radius: 8px;
+                            background-color: #ff3b30;
+                            color: #fff;
+                            font-size: 10px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
                         }
+
                     }
                 }
 
@@ -127,11 +137,11 @@
 
     .right-box {
         width: calc(100% - 292px);
-        /*height: 100%;*/
         background: #FFFFFF;
         border-radius: 8px;
         padding: 20px 20px 10px;
-        display: none;
+        display: flex;
+        flex-direction: column;
 
         .right-head {
             display: flex;
@@ -291,4 +301,82 @@
             }
         }
     }
+
+    /* ===== 移动端适配 ===== */
+    @media screen and (max-width: 768px) {
+
+        .panel-body {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        /* 左侧会话列表 */
+        .left-box {
+            width: 100%;
+            max-width: 100%;
+            min-width: 100%;
+            height: 100%;
+            border-radius: 0;
+            padding: 12px;
+        }
+
+        /* 右侧聊天窗口：默认隐藏 */
+        .right-box {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 90%;
+            height: 92%;
+            z-index: 999;
+            border-radius: 0;
+        }
+
+        .right-box.show {
+            display: flex;
+        }
+
+        /* 头部 */
+        .right-head {
+            height: 50px;
+            flex-shrink: 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-block;
+            font-size: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        /* 消息列表 */
+        .message-list {
+            flex: 1;
+            height: 90%;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        /* 底部输入区 */
+        .right-bot {
+            flex-shrink: 0;
+            border-radius: 0;
+        }
+
+        .enter-box {
+            height: 60px;
+        }
+    }
+
+    .back-btn {
+        display: none;
+    }
+
+    @media screen and (max-width: 768px) {
+        .back-btn {
+            display: inline-block;
+        }
+    }
+
 </style>
