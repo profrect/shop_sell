@@ -29,13 +29,14 @@ define(["jquery", "easy-admin", "etChatSDK"], function ($, ea, etChatSDK) {
                     notifyAudio.pause();
                     notifyAudio.currentTime = 0;
                     audioUnlocked = true;
-                }).catch(() => {});
+                }).catch(() => {
+                });
                 document.removeEventListener('click', unlockAudio);
                 document.removeEventListener('keydown', unlockAudio);
             };
 
-            document.addEventListener('click', unlockAudio, { once: true });
-            document.addEventListener('keydown', unlockAudio, { once: true });
+            document.addEventListener('click', unlockAudio, {once: true});
+            document.addEventListener('keydown', unlockAudio, {once: true});
 
             /* ================== Notification 权限 ================== */
             if ('Notification' in window && Notification.permission === 'default') {
@@ -110,7 +111,8 @@ define(["jquery", "easy-admin", "etChatSDK"], function ($, ea, etChatSDK) {
                         if (!document.hidden) {
                             if (audioUnlocked) {
                                 notifyAudio.currentTime = 0;
-                                notifyAudio.play().catch(() => {});
+                                notifyAudio.play().catch(() => {
+                                });
                             }
                             return;
                         }
@@ -243,6 +245,45 @@ define(["jquery", "easy-admin", "etChatSDK"], function ($, ea, etChatSDK) {
 
                 return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${h}:${m}`;
             }
+
+
+            // 图片上传功能
+            $(document).on('change', '.upload-input', function (e) {
+                const file = e.target.files[0];
+                if (!file?.type.startsWith('image/')) {
+                    alert('请选择图片文件');
+                    return;
+                }
+                sendMessage('img', file);
+            });
+            const sendMessage = async function (type, data) {
+                try {
+                    if (type === 'text') {
+                        await client.sendGroupTextMessage(String(targetId), data);
+                        $('.enter-box').val('');
+                    } else if (type === 'img') {
+                        await client.sendGroupImageMessage(String(targetId), data);
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            };
+            $(document).on('click', '.operate-right', function () {
+                const message = $('.enter-box').val().trim();
+                if (!message) {
+                    alert('消息内容不能为空');
+                    return;
+                }
+                sendMessage('text', message);
+                $('.enter-box').val('');
+            });
+            // 添加输入框回车发送支持
+            $('.enter-box').on('keypress', function (e) {
+                if (e.which === 13 && !e.shiftKey) {
+                    e.preventDefault();
+                    $('.operate-right').trigger('click');
+                }
+            });
         }
     };
 
