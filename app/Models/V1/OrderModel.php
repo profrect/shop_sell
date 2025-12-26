@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
  * @property string $fees_money 快递费用
  * @property int $status 状态：0支付中，1待发货，2已发货，3已收货，4已完成，-1已取消
  * @property int $pay_time 支付时间
+ * @property int $expired_time 过期时间
  * @property int $send_time 发货时间
  * @property int $receive_time 收货时间
  * @property int $finish_time 完成时间
@@ -39,6 +40,7 @@ use Illuminate\Support\Facades\DB;
  * @method static Builder|OrderModel query()
  * @method static Builder|OrderModel whereAddress($value)
  * @method static Builder|OrderModel whereCreatedTime($value)
+ * @method static Builder|OrderModel whereExpiredTime($value)
  * @method static Builder|OrderModel whereFeesMoney($value)
  * @method static Builder|OrderModel whereFinishTime($value)
  * @method static Builder|OrderModel whereGoodsMoney($value)

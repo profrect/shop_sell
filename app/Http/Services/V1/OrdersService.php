@@ -63,15 +63,16 @@ class OrdersService
      */
     public function create(ChatUser $chatUser, array $params = []): array
     {
-        $nowTime            = time();
-        $res                = $this->sure();
-        $order              = new OrderModel();
-        $order->user_id     = $chatUser->id;
-        $order->number      = orderNumber();
-        $order->status      = OrderModel::STATUS_PAYING;
-        $order->goods_money = $res['goods_money'];
-        $order->total_money = $res['total_money'];
-        $order->fees_money  = $res['fees_money'];
+        $nowTime             = time();
+        $res                 = $this->sure();
+        $order               = new OrderModel();
+        $order->user_id      = $chatUser->id;
+        $order->number       = orderNumber();
+        $order->status       = OrderModel::STATUS_PAYING;
+        $order->goods_money  = $res['goods_money'];
+        $order->total_money  = $res['total_money'];
+        $order->fees_money   = $res['fees_money'];
+        $order->expired_time = $nowTime + 60 * 60 * 24;
         $order->save();
         $insert = [];
         foreach ($res['goods'] as $good) {
@@ -117,7 +118,7 @@ class OrdersService
      */
     public function detail($id): array
     {
-        $order = OrderModel::query()->with(['goods','address'])->find($id);
+        $order = OrderModel::query()->with(['goods', 'address'])->find($id);
         if ($order === null) throw new ApiException(__('order.not_exists'));
         return $order->toArray();
     }
