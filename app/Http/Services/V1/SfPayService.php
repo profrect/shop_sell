@@ -133,7 +133,7 @@ class SfPayService
     {
         $action = '/v1/api/digital/pay/create/order';
         /* @var $address OrderAddress; */
-        $address = $order->address;
+        $address = $order->orderAddress;
         $payType = 'USDT';
 
         $notify_url     = env('APP_URL') . '/api/order/sfPayDigitalNotify';
@@ -170,7 +170,7 @@ class SfPayService
                 'crypto_info' => $res['data']['crypto_info'],
             ];
         }
-        \Log::info('创建支付失败', [$res]);
+        \Log::info('创建usdt支付失败', [$res]);
         throw new ApiException("创建支付失败");
     }
 
