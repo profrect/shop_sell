@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\DB;
  * @property int $finish_time 完成时间
  * @property string $username 收件人
  * @property string|null $mobile 收件人联系方式
- * @property \App\Models\V1\OrderAddress|null $address 收件地址
+ * @property string|null $address 收件地址
  * @property int|null $created_time
  * @property int|null $updated_time
  * @property string $create_time
@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\DB;
  * @property string $delete_time
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\V1\OrdersGoods> $goods
  * @property-read int|null $goods_count
+ * @property-read \App\Models\V1\OrderAddress|null $orderAddress
  * @method static Builder|OrderModel newModelQuery()
  * @method static Builder|OrderModel newQuery()
  * @method static Builder|OrderModel query()
@@ -84,7 +85,7 @@ class OrderModel extends BaseModel
      * 订单地址
      * @return HasOne
      */
-    public function address(): HasOne
+    public function orderAddress(): HasOne
     {
         return $this->hasOne(OrderAddress::class, 'order_id', 'id');
     }

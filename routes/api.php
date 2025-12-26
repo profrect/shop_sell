@@ -29,7 +29,8 @@ Route::prefix('set')->group(function () {
 });
 //钱包地址
 Route::prefix('wallet')->group(function () {
-    Route::get('', [WalletAddressController::class, 'index'])->name('钱包列表');
+    Route::get('option', [WalletAddressController::class, 'option'])->name('支付类型');
+    Route::post('pay', [WalletAddressController::class, 'pay'])->name('唤起支付');
 });
 //图标
 Route::prefix('icon')->group(function () {

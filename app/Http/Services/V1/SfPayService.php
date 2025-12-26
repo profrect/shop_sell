@@ -25,30 +25,28 @@ class SfPayService
     /**
      * 法币创建支付
      * @param OrderModel $order
+     * @param $code
      * @param string $payType
-     * @return string
+     * @return array
      * @throws ApiException
      */
-    public function pay(OrderModel $order, string $payType = 'alipay'): string
+    public function pay(OrderModel $order, $code, string $payType = 'alipay'): array
     {
         $action = '/v1/api/pay/create/order';
-        /* @var $address OrderAddress; */
-        $address = $order->address;
-
         $notify_url     = env('APP_URL') . '/api/order/sfPayNotify';
         $params         = [
             'merchant_id'       => $this->api_id,
             'merchant_order_sn' => $order->number,
-            'amount'            => $order->total_money,
+            'amount'            => bcdiv($order->total_money, 1, 2),
             'currency'          => 'USD', //USD,CNY
-            'product_code'      => $payType, //alipay,wechat
+            'product_code'      => $code, //alipay,wechat
             'goods_name'        => $order->goods[0]['goods_title'],
             'notify_url'        => $notify_url, //回调地址
             'payer'             => [
                 'user_id' => $order->user_id,
-                'name'    => $address->first_name . ' ' . $address->last_name,
-                'email'   => $address->email,
-                'phone'   => $address->phone,
+                'name'    => $order->orderAddress->first_name . ' ' . $order->orderAddress->last_name,
+                'email'   => $order->orderAddress->email,
+                'phone'   => $order->orderAddress->phone,
             ],
             'timestamp'         => time()
         ];
@@ -62,7 +60,7 @@ class SfPayService
                 'order_sn' => $data['order_sn'],
                 'response' => json_encode($res['data'], JSON_UNESCAPED_UNICODE),
             ]);
-            return $res['data']['payment_url'];
+            return ['payment_url' => $res['data']['payment_url']];
         }
         \Log::info('创建支付失败', [$res]);
         throw new ApiException("创建支付失败");
@@ -131,19 +129,20 @@ class SfPayService
      * @return array
      * @throws ApiException
      */
-    public function digitalPay(OrderModel $order, string $payType = 'alipay'): array
+    public function digitalPay(OrderModel $order, string $code): array
     {
-        $action = '/v1/api/pay/create/order';
+        $action = '/v1/api/digital/pay/create/order';
         /* @var $address OrderAddress; */
         $address = $order->address;
+        $payType = 'USDT';
 
         $notify_url     = env('APP_URL') . '/api/order/sfPayDigitalNotify';
         $params         = [
             'merchant_id'       => $this->api_id,
             'merchant_order_sn' => $order->number,
-            'amount'            => $order->total_money,
-            'currency'          => 'USDT',
-            'product_code'      => $payType, //alipay,wechat
+            'amount'            => bcdiv($order->total_money, 1, 6),
+            'currency'          => $payType,
+            'product_code'      => $code,
             'goods_name'        => $order->goods[0]['goods_title'],
             'notify_url'        => $notify_url,
             'lang'              => 'zh',
