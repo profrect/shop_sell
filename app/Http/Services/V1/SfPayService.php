@@ -32,7 +32,7 @@ class SfPayService
      */
     public function pay(OrderModel $order, $code, string $payType = 'alipay'): array
     {
-        $action = '/v1/api/pay/create/order';
+        $action         = '/v1/api/pay/create/order';
         $notify_url     = env('APP_URL') . '/api/order/sfPayNotify';
         $params         = [
             'merchant_id'       => $this->api_id,
@@ -62,7 +62,7 @@ class SfPayService
             ]);
             return ['payment_url' => $res['data']['payment_url']];
         }
-        \Log::info('创建支付失败', [$res]);
+        \Log::info('创建支付失败', ['url' => $this->base_url . $action, 'params' => $params, 'res' => $res]);
         throw new ApiException("创建支付失败");
     }
 
