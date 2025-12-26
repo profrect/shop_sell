@@ -58,9 +58,9 @@ class WalletAddressController extends BaseController
         if (!$order) {
             return apiError('订单不存在');
         }
-        if ($order->user_id != $this->user->id) {
-            return apiError('订单不存在order_user_id:'.$order->user_id.';user_id:'.$this->user->id);
-        }
+//        if ($order->user_id != $this->user->id) {
+//            return apiError('订单不存在order_user_id:'.$order->user_id.';user_id:'.$this->user->id);
+//        }
         if ($order->status != OrderModel::STATUS_PAYING) {
             return apiError('订单状态错误');
         }
