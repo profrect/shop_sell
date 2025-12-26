@@ -72,7 +72,7 @@ class OrdersService
         $order->goods_money  = $res['goods_money'];
         $order->total_money  = $res['total_money'];
         $order->fees_money   = $res['fees_money'];
-        $order->expired_time = $nowTime + 60 * 60 * 24;
+        $order->expired_time = $nowTime + 60 * 30;
         $order->save();
         $insert = [];
         foreach ($res['goods'] as $good) {
