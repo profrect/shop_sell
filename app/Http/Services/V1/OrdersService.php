@@ -118,7 +118,7 @@ class OrdersService
      */
     public function detail($id): array
     {
-        $order = OrderModel::query()->with(['goods', 'address'])->find($id);
+        $order = OrderModel::query()->with(['goods', 'orderAddress'])->find($id);
         if ($order === null) throw new ApiException(__('order.not_exists'));
         return $order->toArray();
     }
